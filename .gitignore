@@ -1,0 +1,12 @@
+.database
+*.db
+.idea
+out
+target
+*.iml
+log
+*.log
+*.txt
+*.jar
+settings.gradle
+gradle*
