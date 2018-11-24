@@ -32,7 +32,7 @@ public class Grab {
       make (folder+"/"+folders);
       save (uri, folder+"/"+path);
     }
-    System.out.println("Сохранено ссылок "+ count);
+    logger.info("Сохранено ссылок "+ count);
   }
 
   /**

@@ -23,7 +23,6 @@ import java.util.Set;
 
 class Parse {
     private final org.apache.log4j.Logger logger = Logger.getLogger(Parse.class);
-    private int stopCount;
     private Map<URI, Boolean> urisPages = new HashMap<>();
     private Map<URI, Boolean> urisImages = new HashMap<>();
     private final String website;
@@ -40,8 +39,8 @@ class Parse {
      */
     public Set<URI> getURIs() {
         urisPages.putAll(urisImages);
-        System.out.println("Ссылок на страницы "+urisPages.size());
-        System.out.println("Ссылок на картинки "+urisImages.size());
+        logger.info("Ссылок на страницы " + urisPages.size());
+        logger.info("Ссылок на картинки " + urisImages.size());
         return new HashSet(urisPages.keySet());
     }
 
