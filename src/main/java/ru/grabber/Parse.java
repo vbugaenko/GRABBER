@@ -41,7 +41,7 @@ class Parse {
     public Set<URI> getURIs() {
         urisPages.putAll(urisImages);
         System.out.println("Ссылок на страницы "+urisPages.size());
-        System.out.println("Ссылок на картинки "+urisPages.size());
+        System.out.println("Ссылок на картинки "+urisImages.size());
         return new HashSet(urisPages.keySet());
     }
 
@@ -119,11 +119,9 @@ class Parse {
      * (+ тут же выставляет Boolean, что ссылка обработана).
      */
     private String getNextLink() {
-        if (stopCount < 1)
             for (Map.Entry entry : urisPages.entrySet()) {
                 if (entry.getValue().equals(false)) {
                     entry.setValue(true);
-                    stopCount++;
                     return entry.getKey().toString();
                 }
             }
