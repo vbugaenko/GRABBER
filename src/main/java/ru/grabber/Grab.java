@@ -21,18 +21,27 @@ import java.util.Set;
  */
 public class Grab {
   private final org.apache.log4j.Logger logger = Logger.getLogger(Grab.class);
-  private int count;
+  private int savedFilesCount;
+  private final Set<URI> links;
+  private final String folder;
 
   Grab(Set<URI> links, String folder) {
-    for (URI uri : links) {
-      String path = getPath(uri);
-      String file = getFileNameFromLink(path).toString();
-      String folders = excludeFileName(path, file);
+    this.links = links;
+    this.folder = folder;
 
-      make (folder+"/"+folders);
-      save (uri, folder+"/"+path);
-    }
-    logger.info("Сохранено ссылок "+ count);
+    for (URI uri : links)
+      grabbing( uri );
+
+    logger.info("Сохранено ссылок "+ savedFilesCount);
+  }
+
+  private void grabbing(URI uri){
+    String path = getPath(uri);
+    String file = getFileNameFromLink(path).toString();
+    String folders = excludeFileName(path, file);
+
+    make (folder+"/"+folders);
+    save (uri, folder+"/"+path);
   }
 
   /**
@@ -80,9 +89,10 @@ public class Grab {
     try (ReadableByteChannel rbc = Channels.newChannel( uri.toURL().openStream() );
          FileOutputStream fos = new FileOutputStream( path )) {
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            count++;
+            savedFilesCount++;
     } catch (IOException e) {
       logger.error("Ошибка (" + uri + ")" + e.getMessage());
     }
   }
+
 }
