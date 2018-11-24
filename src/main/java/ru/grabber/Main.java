@@ -14,56 +14,50 @@ import java.util.Set;
  */
 
 public class Main {
-  private static final org.apache.log4j.Logger logger = Logger.getLogger(Main.class);
-  private static final String WEBSITE = "";
+    private static final org.apache.log4j.Logger logger = Logger.getLogger(Main.class);
+    private static final String WEBSITE = "";
 
-  public static void main(String[] args)  {
-    //Распарсить сайт по ссылкам
-    Set<URI> uris = new Parse(WEBSITE).getURIs();
-    String project = folder(WEBSITE);
-    File file = new File(project+".ser");
-    serializeObject(file.getName(), uris);
+    public static void main(String[] args) {
+        //Распарсить сайт по ссылкам
+        Set<URI> uriSet = new Parse(WEBSITE).getURIs();
+        String projectName = getProjectName(WEBSITE);
+        serialize(uriSet, projectName + ".ser");
 
-    //Граб
-    Set<URI> urisLoaded = readObject(file.getName());
-    if (urisLoaded != null) {
-      logger.info(urisLoaded.size() + " links prepared for loading from web");
-      new Grab(uris, project);
+        //Граб
+        new Grab(uriSet, projectName);
+        logger.info(uriSet.size() + " links prepared for loading from web");
     }
-  }
 
-  /**
-   * Получить только имя сайта
-   * @param website http://www.website.ru/folder/folder/file/
-   * @return        website.ru
-   */
-  private static String folder(String website) {
-    return website
-            .replaceAll(".*(//)","")
-            .replaceAll(".*(www.)","")
-            .replaceAll("(.ru).*", "");
-  }
-
-  private static Set<URI> readObject(String fileName)  {
-    Set<URI> uris = null;
-    try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName)) ) {
-        Object object = inputStream.readObject();
-        uris = (Set<URI>)object;
-        logger.info("data loaded from ["+ fileName +"]");
-    } catch (Exception e) {
-      logger.error("Problem with deserialization from (" + fileName + ") file: " + e.getMessage());
+    /**
+     * Получить из web-адреса только имя сайта.
+     * @param  website http://www.website.ru/folder/folder/file/
+     * @return         website
+     */
+    private static String getProjectName(String website) {
+        return website
+                .replaceAll(".*(//)", "")
+                .replaceAll(".*(www.)", "")
+                .replaceAll("(.ru).*", "");
     }
-    return uris;
-  }
 
-  private static void serializeObject(String filename, Set<URI> storage) {
-    try (ObjectOutputStream bOutputStream = new ObjectOutputStream(new FileOutputStream(filename))) {
-      bOutputStream.writeObject(storage);
-      logger.info("data saved to ["+ filename +"]");
-    } catch (Exception e) {
-      logger.error("Problem with serialization in (" + filename + ") file: " + e.getMessage());
+    private static Set<URI> deserialize(String fileName) {
+        Set<URI> uris = null;
+        try (ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(fileName))) {
+            Object object = inputStream.readObject();
+            uris = (Set<URI>) object;
+        } catch (Exception e) {
+            logger.error("Problem with deserialization from (" + fileName + ") file: " + e.getMessage());
+        }
+        return uris;
     }
-  }
+
+    private static void serialize(Set<URI> storage, String filename) {
+        try (ObjectOutputStream bOutputStream = new ObjectOutputStream(new FileOutputStream(filename))) {
+            bOutputStream.writeObject(storage);
+        } catch (Exception e) {
+            logger.error("Problem with serialization in (" + filename + ") file: " + e.getMessage());
+        }
+    }
 
 
 }
