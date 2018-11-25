@@ -1,4 +1,4 @@
-package ru.grabber;
+package ru.grabber.oldStyle;
 
 import org.apache.log4j.Logger;
 
