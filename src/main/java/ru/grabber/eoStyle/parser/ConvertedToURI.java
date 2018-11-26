@@ -1,4 +1,4 @@
-package ru.grabber.eoStyle;
+package ru.grabber.eoStyle.parser;
 
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;
@@ -14,21 +14,21 @@ import java.util.Set;
  * @since 25.11.2018
  */
 
-public class ConvertToSetURI {
-    private final Logger logger = Logger.getLogger(ConvertToSetURI.class);
+public class ConvertedToURI {
+    private final Logger logger = Logger.getLogger(ConvertedToURI.class);
     private final Set<URI> imagesLinks;
     private final Set<URI> pagesLinks;
 
-    public ConvertToSetURI(GetElementsFrom elements) {
-        this.imagesLinks = new HashSet<>();
-        for (Element aElement : elements.getImagesLinks())
-            imagesLinks.add(
-                makeUri(aElement.attr("src")) );
+    public ConvertedToURI(ElementsOf elements) {
+            this.imagesLinks = new HashSet<>();
+            for (Element aElement : elements.getImagesLinks())
+                imagesLinks.add(
+                    makeUri(aElement.attr("src")));
 
-        this.pagesLinks = new HashSet<>();
-        for (Element aElement : elements.getPagesLinks())
-            pagesLinks.add(
-                makeUri(aElement.attr("href")) );
+            this.pagesLinks = new HashSet<>();
+            for (Element aElement : elements.getPagesLinks())
+                pagesLinks.add(
+                    makeUri(aElement.attr("href")));
     }
 
     private URI makeUri(String source) {

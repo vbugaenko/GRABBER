@@ -1,4 +1,4 @@
-package ru.grabber.eoStyle;
+package ru.grabber.eoStyle.parser;
 
 import org.apache.log4j.Logger;
 import org.jsoup.select.Elements;
@@ -10,12 +10,12 @@ import org.jsoup.select.Elements;
  * @since 25.11.2018
  */
 
-class GetElementsFrom {
-    private final Logger logger = Logger.getLogger(GetElementsFrom.class);
+class ElementsOf {
+    private final Logger logger = Logger.getLogger(ElementsOf.class);
     private final Elements imagesLinks;
     private final Elements pagesLinks;
 
-    GetElementsFrom(JSoup jSoup) {
+    ElementsOf(JSoupDoc jSoup) {
         if (jSoup.getDoc() != null) {
             this.imagesLinks = jSoup.getDoc().getElementsByTag("img");
             this.pagesLinks = jSoup.getDoc().getElementsByTag("a");

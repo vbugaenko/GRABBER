@@ -1,46 +1,18 @@
 package ru.grabber.eoStyle;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-
-/**
- * Grab all static content (images, html) from web-site.
- *
- * @author Victor Bugaenko
- * @since 25.11.2018
- */
+import ru.grabber.eoStyle.parser.Parsed;
 
 public class Main {
-    private static final Set<String> links = new HashSet<>();
-    private static final Map<String, Boolean> pagesLinks = new HashMap<>();
-    private static final String WEBSITE = "http://wwww.website.ru/";
+    private static final String WEBSITE="http://www..ru/"; //http://wwww.website.ru/
+    private static final String fileForSave=".ru";
 
     public static void main(String[] args) {
 
-        pagesLinks.put(WEBSITE, false);
+        long startTime = System.currentTimeMillis();
+        System.out.println(new Parsed(WEBSITE).getAllWebsiteLinks().size() );
+        //new SaveResult(fileForSave, new Parser(WEBSITE));
 
-        //TODO: дальше продолжать, без промежутков... новый декоратор для граббинга
-        new PrepareForSaving(
-            new DelNotIntLinks(WEBSITE,
-                new ConvertToSetURI(
-                    new GetElementsFrom(
-                        new JSoup( nextLink() )
-                    )
-                )
-            )
-        );
-    }
+        System.out.println("Программа отработала за "+ (System.currentTimeMillis() - startTime) + " миллисекунд");
 
-    private static String nextLink() {
-        for (Map.Entry entry : pagesLinks.entrySet()) {
-            if (entry.getValue().equals(false)) {
-                entry.setValue(true);
-                return entry.getKey().toString();
-            }
-        }
-        return null;
     }
 }
