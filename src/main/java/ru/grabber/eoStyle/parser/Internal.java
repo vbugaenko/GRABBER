@@ -11,12 +11,12 @@ import java.util.stream.Collectors;
  */
 
 public class Internal {
-    private final Set<URI> imagesLinks;
-    private final Set<URI> internalPagesLinks;
+    private final Set<URI> images;
+    private final Set<URI> internalPages;
 
-    public Internal(String website, FilteredConditionalURI conditionalURI) {
-        this.imagesLinks = conditionalURI.getImagesLinks();
-        this.internalPagesLinks = deleteNotIntLinks(website, conditionalURI.getPagesLinks());
+    public Internal(String website, Conditioned conditionalURI) {
+        this.images = conditionalURI.images();
+        this.internalPages = deleteNotIntLinks(website, conditionalURI.pages());
     }
 
     private Set<URI> deleteNotIntLinks(String website, Set<URI> pages) {
@@ -25,6 +25,6 @@ public class Internal {
             .collect( Collectors.toSet() );
     }
 
-    public Set<URI> getImagesLinks() { return imagesLinks;        }
-    public Set<URI> getPagesLinks()  { return internalPagesLinks; }
+    public Set<URI> images() { return images;        }
+    public Set<URI> pages()  { return internalPages; }
 }

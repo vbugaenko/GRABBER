@@ -16,19 +16,15 @@ import java.util.Set;
 
 public class ConvertedToURI {
     private final Logger logger = Logger.getLogger(ConvertedToURI.class);
-    private final Set<URI> imagesLinks;
-    private final Set<URI> pagesLinks;
+    private final Set<URI> images= new HashSet<>();
+    private final Set<URI> pages = new HashSet<>();
 
-    public ConvertedToURI(ElementsOf elements) {
-            this.imagesLinks = new HashSet<>();
+    public ConvertedToURI(ElementsFrom elements) {
             for (Element aElement : elements.getImagesLinks())
-                imagesLinks.add(
-                    makeUri(aElement.attr("src")));
+                images.add( makeUri(aElement.attr("src")));
 
-            this.pagesLinks = new HashSet<>();
             for (Element aElement : elements.getPagesLinks())
-                pagesLinks.add(
-                    makeUri(aElement.attr("href")));
+                pages.add( makeUri(aElement.attr("href")));
     }
 
     private URI makeUri(String source) {
@@ -41,6 +37,6 @@ public class ConvertedToURI {
         return uri;
     }
 
-    public Set<URI> getImagesLinks() { return imagesLinks; }
-    public Set<URI> getPagesLinks()  { return pagesLinks;  }
+    public Set<URI> images() { return images; }
+    public Set<URI> pages()  { return pages;  }
 }

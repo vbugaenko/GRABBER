@@ -1,5 +1,7 @@
 package ru.grabber.eoStyle.parser;
 
+import org.apache.log4j.Logger;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,13 +15,15 @@ import java.util.Set;
  * @since 25.11.2018
  */
 
+//TODO: Выделить хранилище в отдельный класс
+
 public class Parsed {
     private final Set<URI> allWebsiteLinks = new HashSet<>();
-    private final Map<URI, Boolean> pagesLinks = new HashMap<>();
+    private final Map<URI, Boolean> parsingLinks = new HashMap<>();
     private final String WEBSITE;
 
     public Parsed(String website) {
-        this.WEBSITE = website;
+        this.WEBSITE = website.toLowerCase();
 
         parse(WEBSITE);
         while (nextLink() != null)
@@ -28,25 +32,25 @@ public class Parsed {
 
     private void parse(String webpage) {
         Internal links =
-            new Internal(WEBSITE,
-                new FilteredConditionalURI(
-                    new ConvertedToURI(
-                        new ElementsOf(
-                            new JSoupDoc(webpage)
+                new Internal(WEBSITE,
+                    new Conditioned(
+                        new ConvertedToURI(
+                            new ElementsFrom(webpage)
                         )
                     )
-                )
-            );
+                );
 
-        allWebsiteLinks.addAll(links.getImagesLinks());
-        allWebsiteLinks.addAll(links.getPagesLinks());
+        if (links != null) {
+            allWebsiteLinks.addAll(links.images());
+            allWebsiteLinks.addAll(links.pages());
+        }
 
-        for (URI uri : links.getPagesLinks())
-            pagesLinks.putIfAbsent(uri, false);
+        for (URI uri : links.pages())
+            parsingLinks.putIfAbsent(uri, false);
     }
 
     private String nextLink() {
-        for (Map.Entry entry : pagesLinks.entrySet()) {
+        for (Map.Entry entry : parsingLinks.entrySet()) {
             if (entry.getValue().equals(false)) {
                 entry.setValue(true);
                 return entry.getKey().toString();
