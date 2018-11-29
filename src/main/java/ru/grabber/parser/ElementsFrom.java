@@ -1,4 +1,4 @@
-package ru.grabber.eoStyle.parser;
+package ru.grabber.parser;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;

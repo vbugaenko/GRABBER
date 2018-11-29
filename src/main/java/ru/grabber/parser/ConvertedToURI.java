@@ -1,4 +1,4 @@
-package ru.grabber.eoStyle.parser;
+package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
 import org.jsoup.nodes.Element;

@@ -1,4 +1,4 @@
-package ru.grabber.eoStyle.parser;
+package ru.grabber.parser;
 
 import java.net.URI;
 import java.util.HashMap;
