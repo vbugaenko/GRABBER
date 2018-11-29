@@ -16,10 +16,10 @@ public class Conditioned {
     private final Set<URI> images;
     private final Set<URI> internalPages;
 
-    public Conditioned(ConvertedToURI uri) {
+    public Conditioned(String website, ConvertedToURI uri) {
         this.images = uri.images();
-        this.images.addAll( imagesHrefLinks (uri.pages() ));
-        this.internalPages = selectOnlyIntLinks( uri.pages());
+        this.images.addAll( imagesHrefLinks ( uri.pages() ));
+        this.internalPages = onlyPagesLinks ( website, uri.pages() );
     }
 
     /**
@@ -28,6 +28,7 @@ public class Conditioned {
      */
     private Set<URI> imagesHrefLinks(Set<URI> pages){
         return pages.stream()
+            .filter(p -> p.getHost() != null )
             .filter(p -> Pattern.compile("\\.(jpg|jpeg|png|gif)")
                 .matcher(p.toString().toLowerCase()).find())
             .collect(Collectors.toSet());
@@ -37,9 +38,10 @@ public class Conditioned {
      * Отбираем только внутренние ссылки
      * Выключаем из отбора ссылки на картинки и на JS
      */
-    private Set<URI> selectOnlyIntLinks(Set<URI> pages) {
+    private Set<URI> onlyPagesLinks(String website, Set<URI> pages) {
         return pages.stream()
-            .filter(p -> p.getHost()!= null )
+            .filter(p -> p.getHost() != null )
+            .filter(p -> website.contains( p.getHost() ))
             .filter(p -> !Pattern.compile("\\.(jpg|jpeg|png|gif|doc|pdf|js)")
                 .matcher(p.toString().toLowerCase()).find())
             .collect( Collectors.toSet() );

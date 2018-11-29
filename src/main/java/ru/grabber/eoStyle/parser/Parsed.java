@@ -1,8 +1,7 @@
 package ru.grabber.eoStyle.parser;
 
-import org.apache.log4j.Logger;
-
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,14 +30,13 @@ public class Parsed {
     }
 
     private void parse(String webpage) {
-        Internal links =
-                new Internal(WEBSITE,
-                    new Conditioned(
-                        new ConvertedToURI(
-                            new ElementsFrom(webpage)
-                        )
-                    )
-                );
+        Conditioned links =
+             new Conditioned(WEBSITE,
+                new ConvertedToURI(
+                    new ElementsFrom(webpage)
+                )
+            );
+
 
         if (links != null) {
             allWebsiteLinks.addAll(links.images());

@@ -20,21 +20,21 @@ public class ConvertedToURI {
     private final Set<URI> pages = new HashSet<>();
 
     public ConvertedToURI(ElementsFrom elements) {
+        try {
             for (Element aElement : elements.getImagesLinks())
-                images.add( makeUri(aElement.attr("src")));
+                images.add( makeUri(aElement.attr("src")) );
 
             for (Element aElement : elements.getPagesLinks())
                 pages.add( makeUri(aElement.attr("href")));
+
+        } catch (URISyntaxException e) {
+            logger.error("Problem цшер making URI: " + e.getMessage());
+        }
     }
 
-    private URI makeUri(String source) {
-        URI uri = null;
-        try {
-            return new URI(source);
-        } catch (URISyntaxException e) {
-            logger.error("Problem make URI from (" + source + ") : " + e.getMessage());
-        }
-        return uri;
+    private URI makeUri(String source) throws URISyntaxException {
+        if (source == null) source = "";
+        return new URI(source);
     }
 
     public Set<URI> images() { return images; }
