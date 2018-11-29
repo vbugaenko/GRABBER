@@ -1,13 +1,9 @@
 package ru.grabber.eoStyle.parser;
 
-import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 /**
  * Get JSoup elements from JSoup document;
@@ -17,7 +13,7 @@ import java.net.URL;
  */
 
 class ElementsFrom {
-    private final String blank = "<html><head><title>BlankPage</title></head><body></body></html>";
+    private static final String BLANK = "<html><head><title>BlankPage</title></head><body></body></html>";
     private final Elements imagesLinks;
     private final Elements pagesLinks;
     private final Document doc;
@@ -29,16 +25,14 @@ class ElementsFrom {
     }
 
     private Document check(String webpage) {
-        Document doc = null;
-        if (webpage == null)
-            webpage = blank;
-        else
-            doc = Jsoup.parse(webpage);
+        if (webpage == null) webpage = BLANK;
 
-        if (doc == null)
-            doc = Jsoup.parse(blank);
+        Document document = Jsoup.parse(webpage);
 
-        return doc;
+        if (document == null)
+            document = Jsoup.parse(BLANK);
+
+        return document;
     }
 
     public Elements getImagesLinks() {

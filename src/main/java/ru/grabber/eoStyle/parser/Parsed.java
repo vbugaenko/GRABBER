@@ -1,7 +1,6 @@
 package ru.grabber.eoStyle.parser;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -19,29 +18,26 @@ import java.util.Set;
 public class Parsed {
     private final Set<URI> allWebsiteLinks = new HashSet<>();
     private final Map<URI, Boolean> parsingLinks = new HashMap<>();
-    private final String WEBSITE;
+    private final String website;
 
     public Parsed(String website) {
-        this.WEBSITE = website.toLowerCase();
+        this.website = website.toLowerCase();
 
-        parse(WEBSITE);
+        parse(website);
         while (nextLink() != null)
             parse(nextLink());
     }
 
     private void parse(String webpage) {
         Conditioned links =
-             new Conditioned(WEBSITE,
+             new Conditioned(website,
                 new ConvertedToURI(
                     new ElementsFrom(webpage)
                 )
             );
 
-
-        if (links != null) {
             allWebsiteLinks.addAll(links.images());
             allWebsiteLinks.addAll(links.pages());
-        }
 
         for (URI uri : links.pages())
             parsingLinks.putIfAbsent(uri, false);
