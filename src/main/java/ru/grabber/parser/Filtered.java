@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
  * @since 25.11.2018
  */
 
-public class Conditioned {
+public class Filtered {
     private final Set<URI> images;
     private final Set<URI> internalPages;
 
-    public Conditioned(String website, ConvertedToURI uri) {
+    public Filtered(String website, ConvertedToURI uri) {
         this.images = uri.images();
         this.images.addAll( imagesHrefLinks ( uri.pages() ));
         this.internalPages = onlyPagesLinks ( website, uri.pages() );

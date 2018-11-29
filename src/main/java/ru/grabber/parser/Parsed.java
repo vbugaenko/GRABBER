@@ -29,8 +29,8 @@ public class Parsed {
     }
 
     private void parse(String webpage) {
-        Conditioned links =
-             new Conditioned(website,
+        Filtered links =
+             new Filtered(website,
                 new ConvertedToURI(
                     new ElementsFrom(webpage)
                 )
