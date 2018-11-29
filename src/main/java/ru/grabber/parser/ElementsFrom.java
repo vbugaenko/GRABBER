@@ -1,8 +1,11 @@
 package ru.grabber.parser;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+
+import java.io.IOException;
 
 
 /**
@@ -13,30 +16,41 @@ import org.jsoup.select.Elements;
  */
 
 class ElementsFrom {
+    private final Logger logger = Logger.getLogger(ElementsFrom.class);
     private static final String BLANK = "<html><head><title>BlankPage</title></head><body></body></html>";
-    private final Elements imagesLinks;
-    private final Elements pagesLinks;
-    private final Document doc;
+    private final Elements images;
+    private final Elements pages;
 
     ElementsFrom(String webpage) {
-        this.doc = check(webpage);
-        this.imagesLinks = doc.getElementsByTag("img");
-        this.pagesLinks = doc.getElementsByTag("a");
+        this.images = check(webpage).getElementsByTag("img");
+        this.pages = check(webpage).getElementsByTag("a");
+        logger.info("collected: " + images.size() + " images " + pages.size() + " pages links ");
     }
 
     private Document check(String webpage) {
-        if (webpage == null) webpage = BLANK;
+        if (webpage == null) {
+            webpage = BLANK;
+            logger.info("webpage for parsing is null");
+        }
+        //Document document = Jsoup.parse(webpage);
 
-        Document document = Jsoup.parse(webpage);
+        Document document = null;
+        try {
+            document = Jsoup.connect(webpage).get();
+        } catch (IOException e) {
+            logger.error("Problem to connect with (" + webpage + ") for parsing : " + e.getMessage());
+        }
 
-        if (document == null)
+        if (document == null) {
             document = Jsoup.parse(BLANK);
+            logger.info("webpage is absent, used empty blank");
+        }
 
         return document;
     }
 
-    public Elements getImagesLinks() {
-        return imagesLinks;
+    public Elements images() {
+        return images;
     }
-    public Elements getPagesLinks()  { return pagesLinks;  }
+    public Elements pages()  { return pages;  }
 }

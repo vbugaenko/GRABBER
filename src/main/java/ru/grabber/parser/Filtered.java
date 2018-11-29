@@ -1,5 +1,7 @@
 package ru.grabber.parser;
 
+import org.apache.log4j.Logger;
+
 import java.net.URI;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
  */
 
 public class Filtered {
+    private final Logger logger = Logger.getLogger(Filtered.class);
     private final Set<URI> images;
     private final Set<URI> internalPages;
 
@@ -20,6 +23,7 @@ public class Filtered {
         this.images = uri.images();
         this.images.addAll( imagesHrefLinks ( uri.pages() ));
         this.internalPages = onlyPagesLinks ( website, uri.pages() );
+        logger.info("after filtering we have: " + images.size() + " images " + internalPages.size() + " pages links");
     }
 
     /**

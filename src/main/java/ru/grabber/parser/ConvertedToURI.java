@@ -21,15 +21,16 @@ public class ConvertedToURI {
 
     public ConvertedToURI(ElementsFrom elements) {
         try {
-            for (Element aElement : elements.getImagesLinks())
+            for (Element aElement : elements.images())
                 images.add( makeUri(aElement.attr("src")) );
 
-            for (Element aElement : elements.getPagesLinks())
-                pages.add( makeUri(aElement.attr("href")));
+            for (Element aElement : elements.pages())
+                pages.add( makeUri(aElement.attr("href")) );
 
         } catch (URISyntaxException e) {
-            logger.error("Problem цшер making URI: " + e.getMessage());
+            logger.error("Problem with making URI: " + e.getMessage());
         }
+        logger.info("converted " + images.size() + " images " + pages.size() + " pages links");
     }
 
     private URI makeUri(String source) throws URISyntaxException {

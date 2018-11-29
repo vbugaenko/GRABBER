@@ -1,5 +1,7 @@
 package ru.grabber.parser;
 
+import org.apache.log4j.Logger;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import java.util.Set;
 //TODO: Выделить хранилище в отдельный класс
 
 public class Parsed {
+    private final Logger logger = Logger.getLogger(Parsed.class);
     private final Set<URI> allWebsiteLinks = new HashSet<>();
     private final Map<URI, Boolean> parsingLinks = new HashMap<>();
     private final String website;
@@ -26,6 +29,9 @@ public class Parsed {
         parse(website);
         while (nextLink() != null)
             parse(nextLink());
+
+        logger.info("Parsed: " + allWebsiteLinks.size() + " links");
+
     }
 
     private void parse(String webpage) {
