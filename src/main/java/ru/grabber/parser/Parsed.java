@@ -3,9 +3,6 @@ package ru.grabber.parser;
 import org.apache.log4j.Logger;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -15,23 +12,20 @@ import java.util.Set;
  * @since 25.11.2018
  */
 
-//TODO: Выделить хранилище в отдельный класс
-
 public class Parsed {
     private final Logger logger = Logger.getLogger(Parsed.class);
-    private final Set<URI> allWebsiteLinks = new HashSet<>();
-    private final Map<URI, Boolean> parsingLinks = new HashMap<>();
+    private final LinksHolder holder = new LinksHolder();
     private final String website;
 
     public Parsed(String website) {
         this.website = website.toLowerCase();
 
         parse(website);
-        while (nextLink() != null)
-            parse(nextLink());
 
-        logger.info("Parsed: " + allWebsiteLinks.size() + " links");
+        while (holder.nextLink() != null)
+            parse(holder.nextLink());
 
+        logger.info("Parsed: " + holder.amount() + " links");
     }
 
     private void parse(String webpage) {
@@ -42,24 +36,9 @@ public class Parsed {
                 )
             );
 
-            allWebsiteLinks.addAll(links.images());
-            allWebsiteLinks.addAll(links.pages());
-
-        for (URI uri : links.pages())
-            parsingLinks.putIfAbsent(uri, false);
+            holder.addAll(links.images());
+            holder.addAll(links.pages());
     }
 
-    private String nextLink() {
-        for (Map.Entry entry : parsingLinks.entrySet()) {
-            if (entry.getValue().equals(false)) {
-                entry.setValue(true);
-                return entry.getKey().toString();
-            }
-        }
-        return null;
-    }
-
-    public Set<URI> getAllWebsiteLinks() {
-        return allWebsiteLinks;
-    }
+    public LinksHolder getHolder() { return holder; }
 }
