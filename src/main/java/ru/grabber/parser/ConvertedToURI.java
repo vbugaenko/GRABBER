@@ -32,10 +32,17 @@ public class ConvertedToURI {
         }
     }
 
+    /**
+     * Созданные ссылки обязательно должны быть нормированы:
+     * - символы должны быть привведены к нижнему регистру;
+     * - если последний символ это косая черта, то он должен быть удален;
+     * (иначе может невольно происходить дублирование одного и того же контента)
+     */
+    //TODO последний символ встроке!!!
     private URI makeUri(String source) throws URISyntaxException {
         if (source == null)
             source = "";
-        return new URI(source);
+        return new URI( source.toLowerCase() );
     }
 
     public Set<URI> images() { return images; }
