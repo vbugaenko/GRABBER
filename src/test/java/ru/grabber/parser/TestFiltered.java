@@ -13,54 +13,106 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class TestFiltered {
-    Filtered cond;
+    private Set<URI> images;
+    private Set<URI> pages;
 
     @Before
     public void prepare(){
-        Set<URI> links1 = new HashSet<>();
-        try {
-            links1.add(new URI("http://www.website.ru/folder/folder1/image1.jpg"));
-            links1.add(new URI("http://www.website.ru/folder/folder1/image2.JPG"));
-            links1.add(new URI("http://www.website.ru/folder/folder1/image3.gif"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+        images = new HashSet<>();
+        pages = new HashSet<>();
 
-        Set<URI> links2 = new HashSet<>();
-        try {
-            links2.add(new URI("http://www.website.ru/folder/folder2/image4.jpg"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image5.jpg/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image6.JPG"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image7.gif"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image8.gif/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image9.png"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image10.png/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image11.jpeg"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/image12.jpeg/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/page/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/pagejpg.html/"));
-            links2.add(new URI("http://www.website.ru/folder/folder2/pagejpg.htm"));
-            links2.add(new URI("http:///folder/folder1/image3.gif"));
-            links2.add(new URI("/folder1/image3.gif"));
-            links2.add(new URI("folder/folder2/pagejpg.htm"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
+/*
+            //TODO фильтр внешних ссылок
+            //TODO разобраться с локальными ссылками
+            //игнорирование локальных ссылок
+            pages.add(new URI("/folder1/image3.gif"));
+            pages.add(new URI("folder/folder2/pagejpg.htm"));
+*/
+    }
 
+    public Filtered prepareMock(){
         ConvertedToURI uri = mock(ConvertedToURI.class);
-        when(uri.images()).thenReturn(links1);
-        when(uri.pages()).thenReturn(links2);
-        cond = new Filtered( "http://www.website.ru/", uri );
+        when(uri.images()).thenReturn( images );
+        when(uri.pages() ).thenReturn( pages  );
+        return new Filtered( "http://www.website.ru/", uri );
+    }
+
+    /**
+     * В pages могут находиться прямые ссылки на картинки < a href="картинка" >
+     * они должны быть перенесены в images (отбор идет по расшинению *.jpg | jpeg | gif | png)
+     */
+    @Test
+    public void amountLinks_Test() throws URISyntaxException {
+        images.add(new URI("http://www.website.ru/folder/folder2/image4.jpg"));
+
+        pages.add(new URI("http://www.website.ru/folder/folder2/image5.jpg/"));
+        pages.add(new URI("http://www.website.ru/folder/folder2/image6.JPG"));
+        pages.add(new URI("http://www.website.ru/folder/folder2/image7.gif"));
+
+        pages.add(new URI("http://www.website.ru/folder/folder2/page/"));
+        pages.add(new URI("http://www.website.ru/folder/folder2/pagejpg.html/"));
+        pages.add(new URI("http://www.website.ru/folder/folder2/pagejpg.htm"));
+
+        TestCase.assertTrue(prepareMock().images().size() == 4);
+        TestCase.assertTrue(prepareMock().pages().size() == 3);
+    }
+
+    /**
+     * В pages могут находиться прямые ссылки на картинки < a href="картинка" >
+     * они должны быть перенесены в images (отбор идет по расшинению *.js | doc | pdf)
+     */
+    @Test
+    public void amountPagesLinks_Test() throws URISyntaxException {
+        pages.add(new URI("http://www.website.ru/folder/folder/file/"));
+        pages.add(new URI("http://www.website.ru/folder/folder/file1.jpg/"));
+        pages.add(new URI("http://www.website.ru/folder/folder/file2.js/"));
+        pages.add(new URI("http://www.website.ru/folder/folder/file3.doc"));
+        pages.add(new URI("http://www.website.ru/folder/folder/file4.pdf"));
+
+        TestCase.assertTrue(prepareMock().pages().size() == 1);
     }
 
     @Test
-    public void imagesAmount_Test(){
-        TestCase.assertTrue(cond.images().size() == 12);
+    public void emptyAddress_Test() throws URISyntaxException {
+        images.add(new URI(""));
+        pages.add(new URI(""));
+        pages.add(new URI("#"));
+
+        TestCase.assertTrue(prepareMock().images().size() == 0);
+        TestCase.assertTrue(prepareMock().pages().size() == 0);
     }
 
     @Test
-    public void pagesAmount_Test(){
-        TestCase.assertTrue(cond.pages().size() == 3);
+    public void wrongHost_Test() throws URISyntaxException {
+        images.add(new URI("http://www..ru/folder/folder1/image1.jpg"));
+        images.add(new URI("http:////folder/folder1/image2.jpg"));
+        pages.add(new URI("http://wwwwebsite/folder/folder1/file"));
+
+        TestCase.assertTrue(prepareMock().images().size() == 0);
+        TestCase.assertTrue(prepareMock().pages().size() == 0);
+    }
+
+    @Test
+    public void null_Test() throws URISyntaxException {
+        images.add(null);
+        pages.add(null);
+
+        TestCase.assertTrue(prepareMock().images().size() == 0);
+        TestCase.assertTrue(prepareMock().pages().size() == 0);
+    }
+
+    /**
+     * pages может содержать дубликат уже находящейся ссылки в images,
+     * дубликат должен быть схлопнут
+     */
+    @Test
+    public void deleteRepeatedLinks_Test() throws URISyntaxException {
+        images.add(new URI("http://www.website.ru/folder/folder1/image1.jpg"));
+        images.add(new URI("http://www.website.ru/folder/folder1/IMAGE2.JPG"));
+        pages.add(new URI("http://www.website.ru/folder/folder1/IMAGE2.JPG"));
+
+        TestCase.assertTrue(prepareMock().images().size() == 2);
+        TestCase.assertTrue(prepareMock().pages().size() == 0);
     }
 
 }
