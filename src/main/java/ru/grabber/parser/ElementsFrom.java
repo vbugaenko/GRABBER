@@ -17,36 +17,17 @@ import java.io.IOException;
 
 class ElementsFrom {
     private final Logger logger = Logger.getLogger(ElementsFrom.class);
-    private static final String BLANK = "<html><head><title>BlankPage</title></head><body></body></html>";
     private final Elements images;
     private final Elements pages;
 
-    ElementsFrom(String webpage) {
-        this.images = check(webpage).getElementsByTag("img");
-        this.pages = check(webpage).getElementsByTag("a");
+    ElementsFrom(String webpage) throws IOException {
+        this.images = connectWith(webpage).getElementsByTag("img");
+        this.pages = connectWith(webpage).getElementsByTag("a");
         logger.info("collected: " + images.size() + " images " + pages.size() + " pages links ");
     }
 
-    private Document check(String webpage) {
-        if (webpage == null) {
-            webpage = BLANK;
-            logger.info("webpage for parsing is null");
-        }
-        //Document document = Jsoup.parse(webpage);
-
-        Document document = null;
-        try {
-            document = Jsoup.connect(webpage).get();
-        } catch (IOException e) {
-            logger.error("Problem to connect with (" + webpage + ") for parsing : " + e.getMessage());
-        }
-
-        if (document == null) {
-            document = Jsoup.parse(BLANK);
-            logger.info("webpage is absent, used empty blank");
-        }
-
-        return document;
+    private Document connectWith(String webpage) throws IOException {
+            return Jsoup.connect(webpage).get();
     }
 
     public Elements images() {
