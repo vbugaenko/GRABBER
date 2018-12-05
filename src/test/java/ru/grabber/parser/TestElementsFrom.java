@@ -3,31 +3,25 @@ package ru.grabber.parser;
 import junit.framework.TestCase;
 import org.junit.Test;
 
+import java.io.IOException;
+
 public class TestElementsFrom {
-    private final String blank = "<html><head><title>BlankPage</title></head><body>"
-        + "<a href=\"http://www.website.ru/folder/file/\">text</a>"
-        + "<img src=\"http://www.website.ru/folder/file/\" />"
-        + "</body></html>";
 
-    @Test
-    public void getElementsFromHtml(){
-        ElementsFrom elms = new ElementsFrom(blank);
-        TestCase.assertTrue(elms.images().size() == 1);
-        TestCase.assertTrue(elms.pages().size() == 1);
-    }
-
-    @Test
-    public void getElementsFromNull(){
+    @Test(expected = IllegalArgumentException.class)
+    public void getElementsFromNull() throws IOException {
         ElementsFrom elms = new ElementsFrom(null);
-        TestCase.assertTrue(elms.images().size() == 0);
-        TestCase.assertTrue(elms.pages().size() == 0);
+    }
+
+    @Test(expected = IOException.class)
+    public void getElementsFrom404Resource() throws IOException {
+        ElementsFrom elms = new ElementsFrom("http://www.website404.ru/all_items/");
     }
 
     @Test
-    public void getElementsFrom404Resource(){
-        ElementsFrom elms = new ElementsFrom("http://www.website404.ru/all_items/");
-        TestCase.assertTrue(elms.images().size() == 0);
-        TestCase.assertTrue(elms.pages().size() == 0);
+    public void amountLinksFromRealResource_Test() throws IOException {
+        ElementsFrom elmsFrm = new ElementsFrom("http://yandex.ru");
+        ConvertedToURI uri = new ConvertedToURI(elmsFrm);
+        TestCase.assertTrue(uri.images().size() > 0);
+        TestCase.assertTrue(uri.pages().size() > 0);
     }
-
 }
