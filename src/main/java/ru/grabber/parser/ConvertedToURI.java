@@ -21,20 +21,20 @@ public class ConvertedToURI {
 
     public ConvertedToURI(ElementsFrom elements) {
         try {
-            for (Element aElement : elements.images())
-                images.add( makeUri(aElement.attr("src")) );
+            for (Element img : elements.images())
+                images.add(makeUri(img.attr("src")));
 
-            for (Element aElement : elements.pages())
-                pages.add( makeUri(aElement.attr("href")) );
+            for (Element a : elements.pages())
+                pages.add(makeUri(a.attr("href")));
 
         } catch (URISyntaxException e) {
             logger.error("Problem with making URI: " + e.getMessage());
         }
-        logger.info("converted " + images.size() + " images " + pages.size() + " pages links");
     }
 
     private URI makeUri(String source) throws URISyntaxException {
-        if (source == null) source = "";
+        if (source == null)
+            source = "";
         return new URI(source);
     }
 
