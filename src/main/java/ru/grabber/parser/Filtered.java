@@ -1,8 +1,7 @@
 package ru.grabber.parser;
 
-import org.apache.log4j.Logger;
-
 import java.net.URI;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -15,15 +14,24 @@ import java.util.stream.Collectors;
  */
 
 public class Filtered {
-    private final Logger logger = Logger.getLogger(Filtered.class);
     private final Set<URI> images;
     private final Set<URI> internalPages;
 
     public Filtered(String website, ConvertedToURI uri) {
-        this.images = uri.images();
+        this.images = filteringImages(uri.images());
         this.images.addAll( imagesHrefLinks ( uri.pages() ));
         this.internalPages = onlyPagesLinks ( website, uri.pages() );
-        logger.info("after filtering we have: " + images.size() + " images " + internalPages.size() + " pages links");
+    }
+
+    /**
+     * Фильтрация ранее собранных image ссылок
+     * (в частности, удаление из них null или ссылок с null хостом)
+     */
+    private Set<URI> filteringImages(Set<URI> images){
+        return images.stream()
+            .filter(Objects::nonNull)
+            .filter(i -> i.getHost() != null)
+            .collect(Collectors.toSet());
     }
 
     /**
@@ -32,9 +40,10 @@ public class Filtered {
      */
     private Set<URI> imagesHrefLinks(Set<URI> pages){
         return pages.stream()
-            .filter(p -> p.getHost() != null )
-            .filter(p -> Pattern.compile("\\.(jpg|jpeg|png|gif)")
-                .matcher(p.toString().toLowerCase()).find())
+            .filter(Objects::nonNull)
+            .filter(i -> i.getHost() != null )
+            .filter(i -> Pattern.compile("\\.(jpg|jpeg|png|gif)")
+                .matcher(i.toString().toLowerCase()).find())
             .collect(Collectors.toSet());
     }
 
@@ -44,6 +53,7 @@ public class Filtered {
      */
     private Set<URI> onlyPagesLinks(String website, Set<URI> pages) {
         return pages.stream()
+            .filter(Objects::nonNull)
             .filter(p -> p.getHost() != null )
             .filter(p -> website.contains( p.getHost() ))
             .filter(p -> !Pattern.compile("\\.(jpg|jpeg|png|gif|doc|pdf|js)")
