@@ -46,7 +46,7 @@ public class TestConvertedToURI {
      * Все потенциально-возможные null обрабатываются и заменяются пустой строкой.
      */
     @Test
-    public void amountLinksFromBlank_Test() {
+    public void nullDef_Test() {
         TestCase.assertFalse(uri.images().contains(null));
     }
 
