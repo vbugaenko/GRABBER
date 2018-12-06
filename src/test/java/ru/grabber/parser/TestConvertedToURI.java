@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.URI;
 import java.net.URISyntaxException;
 
 import static org.mockito.Mockito.mock;
@@ -46,7 +47,7 @@ public class TestConvertedToURI {
     }
 
     /**
-     * Все потенциально-возможные null обрабатываются и заменяются пустой строкой.
+     * Null обрабатывается и заменяются пустой строкой.
      */
     @Test
     public void nullDef_Test() {
@@ -59,19 +60,36 @@ public class TestConvertedToURI {
 
     @Test
     public void toLowerCase_Test() throws URISyntaxException {
-        images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.IMG/"));
-        images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.img/"));
-        images.add (new Element("img").attr("src", "http://www.website.ru/folder/FILE1.img/"));
+        images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.JPG/"));
+        images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.jpg/"));
+        images.add (new Element("img").attr("src", "http://www.website.ru/folder/FILE1.jpg/"));
 
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/FiLe2/"));
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/FILE2/"));
         pages.add (new Element("a").attr("href", "http://www.website.ru/FOLDER/file2/"));
 
-        System.out.println(prepareMock().pages());
         TestCase.assertTrue(prepareMock().images().size() == 1);
         TestCase.assertTrue(prepareMock().pages().size() == 1);
     }
 
-    //TODO Тесттирование нормализации: устранения последнего символа в строке если это косая черта
+    private String lastSymbol(String str){
+        return str.substring(str.length() - 1);
+    }
+
+    /**
+     * Тестирование нормализации: устранения последнего символа в строке если это косая черта /
+     */
+    @Test
+    public void lastSymbol_Test() throws URISyntaxException {
+        images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.jpg/"));
+        pages.add (new Element("a").attr("href", "http://www.website.ru/folder/file2/"));
+
+        for ( URI uri : prepareMock().images() )
+            TestCase.assertFalse(lastSymbol(uri.toString()).equals("/") );
+
+        for ( URI uri : prepareMock().pages() )
+            TestCase.assertFalse(lastSymbol(uri.toString()).equals("/") );
+    }
+
 }
 
