@@ -6,17 +6,27 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Parse all static content links (images, html) from web-site.
+ *
+ * @author Victor Bugaenko
+ * @since 05.12.2018
+ */
+
 public class LinksHolder {
 
     private final Set<URI> allWebsiteLinks = new HashSet<>();
     private final Map<URI, Boolean> parsingLinks = new HashMap<>();
 
-    public void addAll(Set<URI> links) {
+    public void addForGrabb(Set<URI> links) {
         allWebsiteLinks.addAll(links);
+    }
 
+    public void addLinksForParse(Set<URI> links) {
         for (URI uri : links)
             parsingLinks.putIfAbsent(uri, false);
     }
+
 
     public int amount() {
         return allWebsiteLinks.size();
@@ -31,4 +41,6 @@ public class LinksHolder {
         }
         return null;
     }
+
+    //TODO сохранение результатов?
 }

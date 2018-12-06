@@ -39,8 +39,10 @@ public class Parsed {
                     )
                 );
 
-            holder.addAll(links.images());
-            holder.addAll(links.pages());
+            holder.addForGrabb(links.images());
+            holder.addForGrabb(links.pages());
+
+            holder.addLinksForParse(links.pages());
 
         } catch (IllegalArgumentException e) {
             logger.warn("Bad link: " + webpage);

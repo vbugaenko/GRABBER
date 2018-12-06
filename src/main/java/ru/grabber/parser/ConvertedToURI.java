@@ -35,14 +35,15 @@ public class ConvertedToURI {
     /**
      * Созданные ссылки обязательно должны быть нормированы.
      * (иначе может невольно происходить дублирование одного и того же контента)
-     * - символы должны быть привведены к нижнему регистру;
-     * - если последним символом является косая черта, то он должен быть удален;
+     * - null заменяется на пустую строку;
+     * - символы приводятся к нижнему регистру;
+     * - если последний символ - косая черта, то он удаляется;
      */
     private URI makeUri(String source) throws URISyntaxException {
         if (source == null)
             source = "";
 
-        if((source.substring(source.length() - 1)).equals("/") )
+        if ((source.length()>0)&&((source.substring(source.length() - 1)).equals("/") ))
             source=source.substring(0, source.length() - 1);
 
         return new URI( source.toLowerCase() );
