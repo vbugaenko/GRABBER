@@ -2,6 +2,7 @@ package ru.grabber.parser;
 
 import junit.framework.TestCase;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
@@ -15,26 +16,32 @@ import static org.mockito.Mockito.when;
 public class TestFiltered {
     private Set<URI> images;
     private Set<URI> pages;
+    private final String host = "http://www.website.ru/";
 
     @Before
     public void prepare(){
         images = new HashSet<>();
         pages = new HashSet<>();
-
-/*
-            //TODO фильтр внешних ссылок
-            //TODO разобраться с локальными ссылками
-            //игнорирование локальных ссылок
-            pages.add(new URI("/folder1/image3.gif"));
-            pages.add(new URI("folder/folder2/pagejpg.htm"));
-*/
     }
 
     public Filtered prepareMock(){
         ConvertedToURI uri = mock(ConvertedToURI.class);
         when(uri.images()).thenReturn( images );
         when(uri.pages() ).thenReturn( pages  );
-        return new Filtered( "http://www.website.ru/", uri );
+        return new Filtered( host, uri );
+    }
+
+    /**
+     * Ссылки на страницы чей хост не соотвествует игнорируются,
+     * только картинкам можно располагаться на внешнем ресурсе
+     */
+    @Test
+    public void outsideLinks_Test() throws URISyntaxException {
+        images.add(new URI("http://www.otherWebsite.ru/folder/folder2/image4.jpg"));
+        pages.add(new URI("http://www.otherWebsite.ru/folder/folder2/page/"));
+
+        TestCase.assertTrue(prepareMock().images().size() == 1);
+        TestCase.assertTrue(prepareMock().pages().size() == 0);
     }
 
     /**
@@ -82,11 +89,13 @@ public class TestFiltered {
         TestCase.assertTrue(prepareMock().pages().size() == 0);
     }
 
+    /**
+     * Локальные ссылки игнорируются
+     */
     @Test
-    public void wrongHost_Test() throws URISyntaxException {
-        images.add(new URI("http://www..ru/folder/folder1/image1.jpg"));
-        images.add(new URI("http:////folder/folder1/image2.jpg"));
-        pages.add(new URI("http://wwwwebsite/folder/folder1/file"));
+    public void localLinks_Test() throws URISyntaxException {
+        images.add(new URI("/folder/folder/image1.jpg"));
+        pages.add(new URI("/folder/folder/file"));
 
         TestCase.assertTrue(prepareMock().images().size() == 0);
         TestCase.assertTrue(prepareMock().pages().size() == 0);
@@ -110,9 +119,10 @@ public class TestFiltered {
         images.add(new URI("http://www.website.ru/folder/folder1/image1.jpg"));
         images.add(new URI("http://www.website.ru/folder/folder1/IMAGE2.JPG"));
         pages.add(new URI("http://www.website.ru/folder/folder1/IMAGE2.JPG"));
-
+        pages.add(new URI("http://www.website.ru/folder/folder/file"));
+        pages.add(new URI("http://www.website.ru/folder/folder/file"));
         TestCase.assertTrue(prepareMock().images().size() == 2);
-        TestCase.assertTrue(prepareMock().pages().size() == 0);
+        TestCase.assertTrue(prepareMock().pages().size() == 1);
     }
 
 }
