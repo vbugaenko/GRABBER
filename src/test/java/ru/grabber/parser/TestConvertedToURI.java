@@ -50,7 +50,7 @@ public class TestConvertedToURI {
      * Null обрабатывается и заменяются пустой строкой.
      */
     @Test
-    public void nullDef_Test() {
+    public void nullHost_Test() {
         images.add (new Element("img").attr("src", null));
         pages.add (new Element("img").attr("src", null));
 
