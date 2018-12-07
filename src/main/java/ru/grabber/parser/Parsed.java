@@ -3,6 +3,7 @@ package ru.grabber.parser;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Parse all static content links (images, html) from web-site.
@@ -11,22 +12,19 @@ import java.io.IOException;
  * @since 25.11.2018
  */
 
-public class Parsed {
+public class Parsed implements Runnable {
     private final Logger logger = Logger.getLogger(Parsed.class);
-    private final LinksHolder holder = new LinksHolder();
+    private final LinksHolder holder;
     private final String website;
+    private final AtomicInteger worked;
 
-    public Parsed(String website) {
-        if (website==null)
+    public Parsed(String website, LinksHolder holder, AtomicInteger worked) {
+        if ((website==null)||(holder==null)||(worked==null))
             throw new IllegalArgumentException();
 
         this.website = website.toLowerCase();
-
-        parse(website);
-        while (holder.nextLink() != null)
-            parse(holder.nextLink());
-
-        logger.info("Parsed: " + holder.amount() + " links");
+        this.holder = holder;
+        this.worked = worked;
     }
 
     private void parse(String webpage) {
@@ -53,5 +51,15 @@ public class Parsed {
 
     public LinksHolder getHolder() {
         return holder;
+    }
+
+    @Override
+    public void run() {
+        worked.incrementAndGet();
+
+        while (holder.haveLinkForParse())
+            parse( holder.chooseNext().toString() );
+
+        worked.decrementAndGet();
     }
 }
