@@ -16,14 +16,12 @@ import java.io.IOException;
  */
 
 class ElementsFrom {
-    private final Logger logger = Logger.getLogger(ElementsFrom.class);
     private final Elements images;
     private final Elements pages;
 
     ElementsFrom(String webpage) throws IOException {
         this.images = connectWith(webpage).getElementsByTag("img");
         this.pages = connectWith(webpage).getElementsByTag("a");
-        logger.info("collected: " + images.size() + " images " + pages.size() + " pages links ");
     }
 
     private Document connectWith(String webpage) throws IOException {
