@@ -9,10 +9,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
     private static final Logger logger = Logger.getLogger(Main.class);
-    private static final String WEBSITE="http://wwww.website.ru/";
-    private static final int cores = Runtime.getRuntime().availableProcessors();
-    private static final ExecutorService executor = Executors.newFixedThreadPool( cores );
-    private static final AtomicInteger worked = new AtomicInteger(0);
+    private static final String WEBSITE = "http://wwww.website.ru/";
+    private static final int CORES = Runtime.getRuntime().availableProcessors();
+    private static final ExecutorService executor = Executors.newFixedThreadPool(CORES);
+    private static final AtomicInteger threadsCount = new AtomicInteger(0);
 
     public static void main(String[] args) {
 
@@ -21,19 +21,27 @@ public class Main {
 
             LinksHolder holder = new LinksHolder(WEBSITE);
 
-                executor.execute( new Parsed( WEBSITE, holder, worked ) );
-                Thread.sleep(3000);
-                while (worked.get() < cores-1)
-                    new Parsed( WEBSITE, holder, worked );
+            executor.execute(new ParseThread(WEBSITE, holder, threadsCount));
+            Thread.sleep(3000);
+            while (threadsCount.get() < CORES - 1)
+                executor.execute(new ParseThread(WEBSITE, holder, threadsCount));
 
-            System.out.println("Программа отработала за "+ (System.currentTimeMillis() - startTime) + " миллисекунд");
-            System.out.println("Было собрано: "+  holder.amount() + " links");
-        } catch (IllegalArgumentException e) {
-            logger.warn("Bad link: " + WEBSITE);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
+            while (threadsCount.get() > 0) {
+                Thread.sleep(10000);
+                System.out.println("threads: " + threadsCount.get());
+                System.out.println("collected links: " + holder.amount());
+            }
+
+            System.out.println("Программа отработала за " + (System.currentTimeMillis() - startTime) / 1000 + " секунд");
+            System.out.println("Было собрано: " + holder.amount() + " links");
+
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            logger.error("Mistake with main thread: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        } catch (IllegalArgumentException e) {
+            logger.error("ParseThread did not get enough or correct data: " + e.getMessage());
+        } catch (URISyntaxException e) {
+            logger.error("Bad link: " + WEBSITE);
         }
     }
 
