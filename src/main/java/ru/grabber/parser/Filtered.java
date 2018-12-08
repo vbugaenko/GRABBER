@@ -24,8 +24,7 @@ public class Filtered {
     }
 
     /**
-     * Фильтрация ранее собранных image ссылок
-     * (в частности, удаление из них null или ссылок с null хостом)
+     * Filtering links from images collection (delete null and links without host).
      */
     private Set<URI> filteringImages(Set<URI> images){
         return images.stream()
@@ -35,8 +34,7 @@ public class Filtered {
     }
 
     /**
-     * Иногда бывает прямая ссылка на картинку < a href = ...,
-     * и тогда нужно эту ссылку отнести в соответствующую коллекциию (images)
+     * Move direct image link (< a href = ...) to images collection.
      */
     private Set<URI> imagesHrefLinks(Set<URI> pages){
         return pages.stream()
@@ -48,8 +46,7 @@ public class Filtered {
     }
 
     /**
-     * Отбираем только внутренние ссылки
-     * Выключаем из отбора ссылки на картинки и на JS
+     * Filtering external links and also pictures, documents, scripts.
      */
     private Set<URI> onlyPagesLinks(String website, Set<URI> pages) {
         return pages.stream()
