@@ -16,15 +16,15 @@ public class ParseThread implements Runnable {
     private final Logger logger = Logger.getLogger(ParseThread.class);
     private final LinksHolder holder;
     private final String website;
-    private final AtomicInteger worked;
+    private final AtomicInteger threadsCount;
 
-    public ParseThread(String website, LinksHolder holder, AtomicInteger worked) {
-        if ((website==null)||(holder==null)||(worked==null))
+    public ParseThread(String website, LinksHolder holder, AtomicInteger threadsCount) {
+        if ((website==null)||(holder==null)||(threadsCount==null))
             throw new IllegalArgumentException();
 
         this.website = website.toLowerCase();
         this.holder = holder;
-        this.worked = worked;
+        this.threadsCount = threadsCount;
     }
 
     private void parse(String webpage) {
@@ -55,11 +55,11 @@ public class ParseThread implements Runnable {
 
     @Override
     public void run() {
-        worked.incrementAndGet();
+        threadsCount.incrementAndGet();
 
         while (holder.haveLinkForParse())
             parse( holder.chooseNext().toString() );
 
-        worked.decrementAndGet();
+        threadsCount.decrementAndGet();
     }
 }
