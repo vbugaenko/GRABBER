@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 25.11.2018
  */
 
-public class Parsed implements Runnable {
-    private final Logger logger = Logger.getLogger(Parsed.class);
+public class ParseThread implements Runnable {
+    private final Logger logger = Logger.getLogger(ParseThread.class);
     private final LinksHolder holder;
     private final String website;
     private final AtomicInteger worked;
 
-    public Parsed(String website, LinksHolder holder, AtomicInteger worked) {
+    public ParseThread(String website, LinksHolder holder, AtomicInteger worked) {
         if ((website==null)||(holder==null)||(worked==null))
             throw new IllegalArgumentException();
 
