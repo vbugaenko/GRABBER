@@ -12,13 +12,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 25.11.2018
  */
 
-public class ParseThread implements Runnable {
-    private final Logger logger = Logger.getLogger(ParseThread.class);
+public class Parser implements Runnable {
+    private final Logger logger = Logger.getLogger(Parser.class);
     private final LinksHolder holder;
     private final String website;
     private final AtomicInteger threadsCount;
 
-    public ParseThread(String website, LinksHolder holder, AtomicInteger threadsCount) {
+    public Parser(String website, LinksHolder holder, AtomicInteger threadsCount) {
         if ((website==null)||(holder==null)||(threadsCount==null))
             throw new IllegalArgumentException();
 
@@ -47,10 +47,6 @@ public class ParseThread implements Runnable {
         } catch (IOException e) {
             logger.warn("Problem connect with: " + webpage);
         }
-    }
-
-    public LinksHolder getHolder() {
-        return holder;
     }
 
     @Override
