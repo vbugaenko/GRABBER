@@ -33,11 +33,10 @@ public class ConvertedToURI {
     }
 
     /**
-     * Созданные ссылки обязательно должны быть нормированы.
-     * (иначе может невольно происходить дублирование одного и того же контента)
-     * - null заменяется на пустую строку;
-     * - символы приводятся к нижнему регистру;
-     * - если последний символ - косая черта, то он удаляется;
+     * Normalising all links:
+     * - change null to empty string "";
+     * - change symbols size toLowerCase;
+     * - delete last symbol, if it's "/";
      */
     private URI makeUri(String source) throws URISyntaxException {
         if (source == null)
