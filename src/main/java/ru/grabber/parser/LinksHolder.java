@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Parse all static content links (images, html) from web-site.
@@ -14,11 +15,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class LinksHolder {
 
-    private final Set<URI> allWebsiteLinks = Collections.newSetFromMap(new ConcurrentHashMap<URI, Boolean>());
-    private final Map<URI, Boolean> parsingLinks = new ConcurrentHashMap<>();
+    private final Set<URI> allWebsiteLinks = Collections.newSetFromMap( new ConcurrentHashMap<URI, Boolean>() );
+    private final Map<URI, Boolean> linksForParsing = new ConcurrentHashMap<>();
+    private final AtomicInteger countParsedLinks = new AtomicInteger(0);
 
     public LinksHolder(String website) throws URISyntaxException {
-        parsingLinks.put(new URI(website), false);
+        linksForParsing.put(new URI(website), false);
     }
 
     public void addForGrabb(Set<URI> links) {
@@ -27,7 +29,7 @@ public class LinksHolder {
 
     public void addLinksForParse(Set<URI> links) {
         for (URI uri : links)
-            parsingLinks.putIfAbsent(uri, false);
+            linksForParsing.putIfAbsent(uri, false);
     }
 
     public int amount() {
@@ -35,21 +37,20 @@ public class LinksHolder {
     }
 
     public URI chooseNext() {
-        for (Map.Entry entry : parsingLinks.entrySet())
+        for (Map.Entry entry : linksForParsing.entrySet())
             if (entry.getValue().equals(false)) {
                 entry.setValue(true);
+                countParsedLinks.incrementAndGet();
                 return (URI) entry.getKey();
             }
         return null;
     }
 
     public boolean haveLinkForParse(){
-        for (Map.Entry entry : parsingLinks.entrySet()) {
-            if (entry.getValue().equals(false)) {
-                return true;
-            }
-        }
-        return false;
+        return linksForParsing.size() > countParsedLinks.get();
     }
 
+    public Set<URI> getAllWebsiteLinks() {
+        return allWebsiteLinks;
+    }
 }
