@@ -1,5 +1,6 @@
 package ru.grabber.parser;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 05.12.2018
  */
 
-public class LinksHolder {
+public class LinksHolder implements Serializable{
 
     private final Set<URI> allWebsiteLinks = Collections.newSetFromMap( new ConcurrentHashMap<URI, Boolean>() );
     private final Map<String, Boolean> linksForParsing = new ConcurrentHashMap<>();

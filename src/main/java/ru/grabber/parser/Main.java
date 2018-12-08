@@ -32,6 +32,8 @@ public class Main {
             logger.info("Total spent time:" + (System.currentTimeMillis() - startTime) / 1000 + " second");
             logger.info("Total collected: " + holder.amount() + " links");
 
+            new SaveResult("websiteLinks.save", holder);
+
         } catch (InterruptedException e) {
             logger.error("Mistake with main thread: " + e.getMessage());
             Thread.currentThread().interrupt();
