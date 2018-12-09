@@ -39,12 +39,10 @@ public class Parser implements Runnable {
 
             holder.addForGrabb(links.images());
             holder.addForGrabb(links.pages());
-
             holder.addLinksForParse(links.pages());
 
-            logger.info("Parser (one of "+ threadsCount.get() +") collected: "
-                + (links.images().size()+links.pages().size()) +" static links, " +
-                "(for next parse " + links.pages().size() +")");
+            logger.info("Parser collected: " +(links.images().size()+links.pages().size()) +" static links, "
+                + "(for next parse " + links.pages().size() +")");
 
         } catch (IllegalArgumentException e) {
             logger.warn("Bad link: " + webpage);
