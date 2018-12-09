@@ -1,13 +1,15 @@
 package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
+import ru.grabber.holder.LinksHolder;
+import ru.grabber.holder.SaveResult;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Grab all static content (images, html) from web-site.
+ * Multithreading management for parsers.
  *
  * @author Victor Bugaenko
  * @since 22.11.2018
@@ -19,11 +21,11 @@ public class Manager {
     private final int cores = Runtime.getRuntime().availableProcessors();
     private final ExecutorService executor = Executors.newFixedThreadPool(cores);
     private final AtomicInteger threadsCount = new AtomicInteger(0);
-    private final LinksHolder holder;
+    private final LinksHolder holder= LinksHolder.getInstance();
 
     public Manager(String website) {
         this.website = website;
-        this.holder = new LinksHolder(website);
+        this.holder.addStartingPage(website);
         parse();
         new SaveResult(website, holder);
     }
@@ -32,7 +34,7 @@ public class Manager {
         try {
             long startTime = System.currentTimeMillis();
 
-            executor.execute(new Parser(website, holder, threadsCount));
+            executor.execute(new Parser(website, threadsCount));
             Thread.sleep(3000);
 
             while (threadsCount.get() > 0) {
@@ -53,7 +55,7 @@ public class Manager {
 
     private void startParsersThreads() {
         for (int i = threadsCount.get(); i < (cores); i++)
-            executor.execute(new Parser(website, holder, threadsCount));
+            executor.execute(new Parser(website, threadsCount));
     }
 
 

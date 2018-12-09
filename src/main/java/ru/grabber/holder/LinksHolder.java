@@ -1,4 +1,4 @@
-package ru.grabber.parser;
+package ru.grabber.holder;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -15,6 +15,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class LinksHolder implements Serializable{
 
+    private static volatile LinksHolder instance;
+    private LinksHolder(){}
+
+    public static LinksHolder getInstance() {
+        LinksHolder localInstance = instance;
+        if (localInstance == null) {
+            synchronized (LinksHolder.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new LinksHolder();
+                }
+            }
+        }
+        return localInstance;
+    }
+
     private final Set<URI> allWebsiteLinks = Collections.newSetFromMap( new ConcurrentHashMap<URI, Boolean>() );
     private final Map<String, Boolean> linksForParsing = new ConcurrentHashMap<>();
     private final AtomicInteger countParsedLinks = new AtomicInteger(0);
@@ -22,7 +38,7 @@ public class LinksHolder implements Serializable{
     /**
      * @param website     add this starting link for first parser.
      */
-    public LinksHolder(String website) {
+    public void addStartingPage(String website) {
         linksForParsing.put(website, false);
     }
 

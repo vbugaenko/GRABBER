@@ -15,16 +15,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser implements Runnable {
     private final Logger logger = Logger.getLogger(Parser.class);
-    private final LinksHolder holder;
+    private final LinksHolder holder = LinksHolder.getInstance();
     private final String website;
     private final AtomicInteger threadsCount;
 
-    Parser(String website, LinksHolder holder, AtomicInteger threadsCount) {
-        if ((website==null)||(holder==null)||(threadsCount==null))
+    Parser(String website, AtomicInteger threadsCount) {
+        if ((website==null)||(threadsCount==null))
             throw new IllegalArgumentException();
 
         this.website = website.toLowerCase();
-        this.holder = holder;
         this.threadsCount = threadsCount;
     }
 
