@@ -14,12 +14,12 @@ import java.util.Set;
  * @since 25.11.2018
  */
 
-public class ConvertedToURI {
+class ConvertedToURI {
     private final Logger logger = Logger.getLogger(ConvertedToURI.class);
     private final Set<URI> images= new HashSet<>();
     private final Set<URI> pages = new HashSet<>();
 
-    public ConvertedToURI(ElementsFrom elements) {
+    ConvertedToURI(ElementsFrom elements) {
         try {
             for (Element img : elements.images())
                 images.add(makeUri(img.attr("src")));
@@ -48,6 +48,6 @@ public class ConvertedToURI {
         return new URI( source.toLowerCase() );
     }
 
-    public Set<URI> images() { return images; }
-    public Set<URI> pages()  { return pages;  }
+    Set<URI> images() { return images; }
+    Set<URI> pages()  { return pages;  }
 }

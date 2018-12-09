@@ -13,11 +13,11 @@ import java.util.stream.Collectors;
  * @since 25.11.2018
  */
 
-public class Filtered {
+class Filtered {
     private final Set<URI> images;
     private final Set<URI> internalPages;
 
-    public Filtered(String website, ConvertedToURI uri) {
+    Filtered(String website, ConvertedToURI uri) {
         this.images = filteringImages(uri.images());
         this.images.addAll( imagesHrefLinks ( uri.pages() ));
         this.internalPages = onlyPagesLinks ( website, uri.pages() );
@@ -58,6 +58,6 @@ public class Filtered {
             .collect( Collectors.toSet() );
     }
 
-    public Set<URI> images() { return images;        }
-    public Set<URI> pages()  { return internalPages; }
+    Set<URI> images() { return images;        }
+    Set<URI> pages()  { return internalPages; }
 }

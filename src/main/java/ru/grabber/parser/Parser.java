@@ -1,6 +1,7 @@
 package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
+import ru.grabber.holder.LinksHolder;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,7 +19,7 @@ public class Parser implements Runnable {
     private final String website;
     private final AtomicInteger threadsCount;
 
-    public Parser(String website, LinksHolder holder, AtomicInteger threadsCount) {
+    Parser(String website, LinksHolder holder, AtomicInteger threadsCount) {
         if ((website==null)||(holder==null)||(threadsCount==null))
             throw new IllegalArgumentException();
 
