@@ -1,4 +1,4 @@
-package ru.grabber.oldStyle;
+package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
 
@@ -9,35 +9,29 @@ import java.net.URI;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
 
 /**
- * Grab static content (images, html) from URL's collection.
+ * Grab static content (images, html) from URI.
  *
  * @author Victor Bugaenko
  * @since 23.11.2018
  */
-public class Grab {
-  private final org.apache.log4j.Logger logger = Logger.getLogger(Grab.class);
-  private int savedFilesCount;
-  private final Set<URI> links;
+public class Grabber implements Runnable{
+  private final org.apache.log4j.Logger logger = Logger.getLogger(Grabber.class);
+  private final URI uri;
   private final String folder;
 
-  Grab(Set<URI> links, String folder) {
-    this.links = links;
+  public Grabber(URI uri, String folder) {
+    this.uri = uri;
     this.folder = folder;
-
-    for (URI uri : links)
-      grabbing( uri );
-
-    logger.info("Сохранено ссылок "+ savedFilesCount);
   }
 
-  private void grabbing(URI uri){
+  @Override
+  public void run() {
     String path = getPath(uri);
-    String file = getFileNameFromLink(path).toString();
+    String file = getName(path);
     String folders = excludeFileName(path, file);
 
     make (folder+"/"+folders);
@@ -45,8 +39,6 @@ public class Grab {
   }
 
   /**
-   * Получить из URL полный путь к файлу со всеми папками.
-   *
    * @param uri http://www.website.ru/folder/folder/file/
    * @return    folder/folder/file/
    */
@@ -55,25 +47,17 @@ public class Grab {
   }
 
   /**
-   * Получить из URL только имя файла.
-   *
-   * @param source http://www.website.ru/folder/folder/file/
-   * @return       file
+   * @param path http://www.website.ru/folder/folder/file/
+   * @return     file
    */
-  private Path getFileNameFromLink(String source) {
-    return Paths.get(source).getFileName();
+  private String getName(String path) {
+    return Paths.get(path).getFileName().toString();
   }
 
-  /**
-   * Исключить имя файла из строки.
-   */
   private String excludeFileName(String path, String fileName) {
     return path.replace(fileName, "");
   }
 
-  /**
-   * Создать все директории, если их вдруг ещё нет.
-   */
   private void make(String folders) {
     try {
       Files.createDirectories(Paths.get(folders));
@@ -82,17 +66,12 @@ public class Grab {
     }
   }
 
-  /**
-   * Сохранение файла (по-байтово).
-   */
   private void save(URI uri, String path) {
     try (ReadableByteChannel rbc = Channels.newChannel( uri.toURL().openStream() );
          FileOutputStream fos = new FileOutputStream( path )) {
             fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-            savedFilesCount++;
     } catch (IOException e) {
-      logger.error("Ошибка (" + uri + ")" + e.getMessage());
+      logger.error(e.getMessage());
     }
   }
-
 }
