@@ -1,7 +1,9 @@
 package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
-import ru.grabber.holder.LinksHolder;
+import ru.grabber.holder.Holder;
+import ru.grabber.holder.LoadedLinksHolder;
+import ru.grabber.holder.ParsedLinksHolder;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,7 +17,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser implements Runnable {
     private final Logger logger = Logger.getLogger(Parser.class);
-    private final LinksHolder holder = LinksHolder.getInstance();
+    private final Holder loaded = LoadedLinksHolder.getInstance();
+    private final Holder parsed = ParsedLinksHolder.getInstance();
     private final String website;
     private final AtomicInteger threadsCount;
 
@@ -37,9 +40,9 @@ public class Parser implements Runnable {
                     )
                 );
 
-            holder.addForGrabb(links.images());
-            holder.addForGrabb(links.pages());
-            holder.addLinksForParse(links.pages());
+            loaded.add(links.images());
+            loaded.add(links.pages());
+            parsed.add(links.pages());
 
             logger.info("Parser collected: " +(links.images().size()+links.pages().size()) +" static links, "
                 + "(for next parse " + links.pages().size() +")");
@@ -55,8 +58,8 @@ public class Parser implements Runnable {
     public void run() {
         threadsCount.incrementAndGet();
 
-        while (holder.haveLinkForParse())
-            parse( holder.chooseNext() );
+        while (parsed.haveNextLink())
+            parse( parsed.chooseNext() );
 
         threadsCount.decrementAndGet();
     }
