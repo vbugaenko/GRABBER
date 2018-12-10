@@ -1,9 +1,11 @@
 package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
-import ru.grabber.holder.LinksHolder;
-import ru.grabber.holder.SaveResult;
+import ru.grabber.holder.Holder;
+import ru.grabber.holder.ParsedLinksHolder;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -21,13 +23,12 @@ public class Manager {
     private final int cores = Runtime.getRuntime().availableProcessors();
     private final ExecutorService executor = Executors.newFixedThreadPool(cores);
     private final AtomicInteger threadsCount = new AtomicInteger(0);
-    private final LinksHolder holder= LinksHolder.getInstance();
+    private final Holder holder = ParsedLinksHolder.getInstance();
 
-    public Manager(String website) {
+    public Manager(String website) throws URISyntaxException {
         this.website = website;
-        this.holder.addStartingPage(website);
+        this.holder.add(new URI(website));
         parse();
-        new SaveResult(website, holder);
     }
 
     private void parse(){
