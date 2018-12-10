@@ -12,7 +12,7 @@ public interface Holder {
 
     boolean haveNextLink();
 
-    String chooseNext();
+    URI chooseNext();
 
     void add(Set<URI> links);
 

@@ -30,12 +30,12 @@ public abstract class AbstractHolder implements Holder, Serializable {
         return links.size();
     }
 
-    public String chooseNext() {
+    public URI chooseNext() {
         for (Map.Entry entry : links.entrySet())
             if (entry.getValue().equals(false)) {
                 entry.setValue(true);
                 count.incrementAndGet();
-                return entry.getKey().toString();
+                return (URI) entry.getKey();
             }
         return null;
     }

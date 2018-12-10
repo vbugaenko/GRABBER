@@ -59,7 +59,7 @@ public class Parser implements Runnable {
         threadsCount.incrementAndGet();
 
         while (parsed.haveNextLink())
-            parse( parsed.chooseNext() );
+            parse( parsed.chooseNext().toString() );
 
         threadsCount.decrementAndGet();
     }
