@@ -17,13 +17,5 @@ public class ParsedLinksHolder extends AbstractHolder{
         }
         return localInstance;
     }
-/*
-    /**
-     * @param website add this starting link for first parser.
 
-    public void addLink(String link) {
-        super.website = website;
-        linksForParsing.put(website, false);
-    }
-   */
 }

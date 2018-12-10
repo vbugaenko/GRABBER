@@ -5,11 +5,13 @@ import java.util.Set;
 
 public interface Holder {
 
-    void setWebsite(String website);
-
     boolean haveNextLink();
 
     String chooseNext();
 
     void add(Set<URI> links);
+
+    void add(URI link);
+
+    int amount();
 }

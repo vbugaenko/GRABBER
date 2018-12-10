@@ -9,13 +9,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AbstractHolder implements Holder, Serializable {
 
-    private final Map<String, Boolean> links = new ConcurrentHashMap<>();
+    private final Map<URI, Boolean> links = new ConcurrentHashMap<>();
     private final AtomicInteger count = new AtomicInteger(0);
-    private String website;
 
     public void add(Set<URI> links) {
         for (URI uri : links)
-            this.links.putIfAbsent(uri.toString(), false);
+            this.links.putIfAbsent(uri, false);
+    }
+
+    public void add(URI link) {
+        links.put(link, false);
     }
 
     public int amount() {
@@ -32,16 +35,8 @@ public abstract class AbstractHolder implements Holder, Serializable {
         return null;
     }
 
-    public void setWebsite(String website) {
-        this.website = website;
-    }
-
     public boolean haveNextLink(){
         return links.size() > count.get();
     }
-/*
-    public void save() {
-        new SaveResult(website, links);
-    }
-    */
+
 }
