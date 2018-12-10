@@ -1,5 +1,10 @@
 package ru.grabber.holder;
 
+/**
+ * @author Victor Bugaenko
+ * @since 10.12.2018
+ */
+
 public class ParsedLinksHolder extends AbstractHolder{
 
     private static volatile ParsedLinksHolder instance;

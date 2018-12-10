@@ -7,6 +7,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * @author Victor Bugaenko
+ * @since 10.12.2018
+ */
+
 public abstract class AbstractHolder implements Holder, Serializable {
 
     private final Map<URI, Boolean> links = new ConcurrentHashMap<>();
