@@ -44,4 +44,8 @@ public abstract class AbstractHolder implements Holder, Serializable {
         return links.size() > count.get();
     }
 
+    public void save(String project) {
+        new SaveResult(project, links);
+    }
+
 }

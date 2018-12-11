@@ -19,4 +19,6 @@ public interface Holder {
     void add(URI link);
 
     int amount();
+
+    void save(String website);
 }
