@@ -31,11 +31,11 @@ public abstract class AbstractHolder implements Holder, Serializable {
     }
 
     public URI chooseNext() {
-        for (Map.Entry entry : links.entrySet())
+        for (Map.Entry<URI, Boolean> entry : links.entrySet())
             if (entry.getValue().equals(false)) {
                 entry.setValue(true);
                 count.incrementAndGet();
-                return (URI) entry.getKey();
+                return entry.getKey();
             }
         return null;
     }
