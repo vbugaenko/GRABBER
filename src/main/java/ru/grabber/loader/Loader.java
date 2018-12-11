@@ -30,7 +30,7 @@ public class Loader implements Runnable {
 
     public Loader(String folder) {
         this(Util.getProjectName(folder), new AtomicInteger(0));
-        run();
+        startLoadersThreads();
     }
 
     private Loader(String folder, AtomicInteger threadsCount) {
