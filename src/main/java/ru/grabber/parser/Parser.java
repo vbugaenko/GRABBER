@@ -4,7 +4,6 @@ import org.apache.log4j.Logger;
 import ru.grabber.holder.Holder;
 import ru.grabber.holder.LoadedLinksHolder;
 import ru.grabber.holder.ParsedLinksHolder;
-import ru.grabber.loader.Loader;
 
 import java.io.IOException;
 import java.net.URI;
@@ -72,7 +71,6 @@ public class Parser implements Runnable {
         if (threadsCount.get()==0) {
             logger.info("Total parsed: " + parsed.amount() + " links");
             loaded.save(website);
-            new Loader(website);
         }
     }
 
