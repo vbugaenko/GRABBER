@@ -6,6 +6,8 @@ import ru.grabber.holder.LoadedLinksHolder;
 import ru.grabber.holder.ParsedLinksHolder;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -22,7 +24,13 @@ public class Parser implements Runnable {
     private final String website;
     private final AtomicInteger threadsCount;
 
-    Parser(String website, AtomicInteger threadsCount) {
+    public Parser(URI website){
+        this(website.toString(), new AtomicInteger(0));
+        this.parsed.add(website);
+        run();
+    }
+
+    private Parser(String website, AtomicInteger threadsCount) {
         if ((website==null)||(threadsCount==null))
             throw new IllegalArgumentException();
 
@@ -58,9 +66,15 @@ public class Parser implements Runnable {
     public void run() {
         threadsCount.incrementAndGet();
 
-        while (parsed.haveNextLink())
-            parse( parsed.chooseNext().toString() );
-
+        while (parsed.haveNextLink()) {
+            parse(parsed.chooseNext().toString());
+            startParsersThreads();
+        }
         threadsCount.decrementAndGet();
+    }
+
+    private void startParsersThreads() {
+        for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors() ); i++)
+            new Thread(new Parser(website, threadsCount)).start();
     }
 }
