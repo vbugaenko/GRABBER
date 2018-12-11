@@ -30,11 +30,16 @@ public class Loader implements Runnable {
 
     public Loader(String folder) {
         this(Util.getProjectName(folder), new AtomicInteger(0));
+        run();
     }
 
     private Loader(String folder, AtomicInteger threadsCount) {
         this.threadsCount = threadsCount;
         this.folder = folder;
+    }
+
+    public AtomicInteger getThreadsCount() {
+        return threadsCount;
     }
 
     @Override
@@ -56,7 +61,7 @@ public class Loader implements Runnable {
     }
 
     private void startLoadersThreads() {
-        for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors()/2 ); i++)
+        for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors()); i++)
             new Thread(new Loader(folder, threadsCount)).start();
     }
 
