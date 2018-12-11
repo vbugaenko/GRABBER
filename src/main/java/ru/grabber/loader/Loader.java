@@ -3,6 +3,7 @@ package ru.grabber.loader;
 import org.apache.log4j.Logger;
 import ru.grabber.holder.Holder;
 import ru.grabber.holder.LoadedLinksHolder;
+import ru.grabber.util.Util;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Load static content (images, html) from URI.
@@ -24,43 +26,38 @@ public class Loader implements Runnable {
     private final org.apache.log4j.Logger logger = Logger.getLogger(Loader.class);
     private final Holder holder = LoadedLinksHolder.getInstance();
     private final String folder;
+    private final AtomicInteger threadsCount;
 
     public Loader(String folder) {
+        this(Util.getProjectName(folder), new AtomicInteger(0));
+    }
+
+    private Loader(String folder, AtomicInteger threadsCount) {
+        this.threadsCount = threadsCount;
         this.folder = folder;
     }
 
     @Override
     public void run() {
+        threadsCount.incrementAndGet();
 
         while (holder.haveNextLink()) {
             URI uri = holder.chooseNext();
-            String path = getPath(uri);
-            String file = getName(path);
-            String folders = excludeFileName(path, file);
+            String path = Util.getPath(uri);
+            String file = Util.getFileName(path);
+            String folders = Util.excludeFileName(path, file);
 
             make(folder + "/" + folders);
             save(uri, folder + "/" + path);
+
+            startLoadersThreads();
         }
+        threadsCount.decrementAndGet();
     }
 
-    /**
-     * @param uri http://www.website.ru/folder/folder/file/
-     * @return    folder/folder/file/
-     */
-    private String getPath(URI uri) {
-        return uri.getPath().replaceFirst("/", "");
-    }
-
-    /**
-     * @param path http://www.website.ru/folder/folder/file/
-     * @return     file
-     */
-    private String getName(String path) {
-        return Paths.get(path).getFileName().toString();
-    }
-
-    private String excludeFileName(String path, String fileName) {
-        return path.replace(fileName, "");
+    private void startLoadersThreads() {
+        for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors()/2 ); i++)
+            new Thread(new Loader(folder, threadsCount)).start();
     }
 
     private void make(String folders) {
