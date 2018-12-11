@@ -22,6 +22,10 @@ public abstract class AbstractHolder implements Holder, Serializable {
             this.links.putIfAbsent(uri, false);
     }
 
+    public void add(Map<URI, Boolean> links) {
+        this.links.putAll(links);
+    }
+
     public void add(URI link) {
         links.put(link, false);
     }
