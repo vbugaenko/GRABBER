@@ -1,6 +1,7 @@
 package ru.grabber.holder;
 
 import org.apache.log4j.Logger;
+import ru.grabber.util.Util;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -19,7 +20,7 @@ public class SaveResult {
 
     public SaveResult(String project, Map<URI, Boolean> holder) {
 
-        String file = getName(project) +".save";
+        String file = Util.getProjectName(project) +".save";
 
         try (ObjectOutputStream bOS = new ObjectOutputStream(
             new FileOutputStream( file ))) {
@@ -27,17 +28,6 @@ public class SaveResult {
         } catch (Exception e) {
             logger.error("Problem with serialization (" + file + "): " + e.getMessage());
         }
-    }
-
-    /**
-     * Get WEBSITE name  http://www.website.ru/
-     * @return           website
-     */
-    private static String getName(String project) {
-        return project
-            .replaceAll(".*(//)", "")
-            .replaceAll(".*(www.)", "")
-            .replaceAll("(.ru).*", "");
     }
 
 }
