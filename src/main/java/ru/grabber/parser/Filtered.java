@@ -18,15 +18,15 @@ class Filtered {
     private final Set<URI> internalPages;
 
     Filtered(String website, ConvertedToURI uri) {
-        this.images = filteringImages(uri.images());
-        this.images.addAll( imagesHrefLinks ( uri.pages() ));
-        this.internalPages = onlyPagesLinks ( website, uri.pages() );
+        this.images = deleteNullFrom ( uri.imagesLinks() );
+        this.images.addAll( imagesHrefLinks ( uri.pagesLinks() ));
+        this.internalPages = onlyPagesLinks ( website, uri.pagesLinks() );
     }
 
     /**
-     * Filtering links from images collection (delete null and links without host).
+     * Delete null and links without host.
      */
-    private Set<URI> filteringImages(Set<URI> images){
+    private Set<URI> deleteNullFrom (Set<URI> images) {
         return images.stream()
             .filter(Objects::nonNull)
             .filter(i -> i.getHost() != null)
@@ -36,7 +36,7 @@ class Filtered {
     /**
      * Move direct image link (< a href = ...) to images collection.
      */
-    private Set<URI> imagesHrefLinks(Set<URI> pages){
+    private Set<URI> imagesHrefLinks(Set<URI> pages) {
         return pages.stream()
             .filter(Objects::nonNull)
             .filter(i -> i.getHost() != null )

@@ -26,8 +26,8 @@ class ElementsFrom {
             return Jsoup.connect(webpage).get();
     }
 
-    Elements images() {
+    Elements imagesLinks() {
         return images;
     }
-    Elements pages()  { return pages;  }
+    Elements pagesLinks()  { return pages;  }
 }

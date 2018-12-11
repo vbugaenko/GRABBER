@@ -19,12 +19,12 @@ class ConvertedToURI {
     private final Set<URI> images= new HashSet<>();
     private final Set<URI> pages = new HashSet<>();
 
-    ConvertedToURI(ElementsFrom elements) {
+    ConvertedToURI(ElementsFrom jsoup) {
         try {
-            for (Element img : elements.images())
+            for (Element img : jsoup.imagesLinks())
                 images.add(makeUri(img.attr("src")));
 
-            for (Element a : elements.pages())
+            for (Element a : jsoup.pagesLinks())
                 pages.add(makeUri(a.attr("href")));
 
         } catch (URISyntaxException e) {
@@ -48,6 +48,6 @@ class ConvertedToURI {
         return new URI( source.toLowerCase() );
     }
 
-    Set<URI> images() { return images; }
-    Set<URI> pages()  { return pages;  }
+    Set<URI> imagesLinks() { return images; }
+    Set<URI> pagesLinks()  { return pages;  }
 }
