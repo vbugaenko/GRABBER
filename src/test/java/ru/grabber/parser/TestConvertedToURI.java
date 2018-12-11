@@ -23,10 +23,10 @@ public class TestConvertedToURI {
         pages = new Elements();
     }
 
-    public ConvertedToURI prepareMock( ){
+    private ConvertedToURI prepareMock( ){
         ElementsFrom elms = mock(ElementsFrom.class);
-        when(elms.images()).thenReturn(images);
-        when(elms.pages()).thenReturn(pages);
+        when(elms.imagesLinks()).thenReturn(images);
+        when(elms.pagesLinks()).thenReturn(pages);
         return new ConvertedToURI(elms);
     }
 
@@ -42,8 +42,8 @@ public class TestConvertedToURI {
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/file13"));
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/file4/"));
 
-        TestCase.assertTrue(prepareMock().images().size() == 3);
-        TestCase.assertTrue(prepareMock().pages().size() == 4);
+        TestCase.assertTrue(prepareMock().imagesLinks().size() == 3);
+        TestCase.assertTrue(prepareMock().pagesLinks().size() == 4);
     }
 
     /**
@@ -54,8 +54,8 @@ public class TestConvertedToURI {
         images.add (new Element("img").attr("src", null));
         pages.add (new Element("img").attr("src", null));
 
-        TestCase.assertFalse(prepareMock().images().contains(null));
-        TestCase.assertFalse(prepareMock().pages().contains(null));
+        TestCase.assertFalse(prepareMock().imagesLinks().contains(null));
+        TestCase.assertFalse(prepareMock().pagesLinks().contains(null));
     }
 
     @Test
@@ -68,8 +68,8 @@ public class TestConvertedToURI {
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/FILE2/"));
         pages.add (new Element("a").attr("href", "http://www.website.ru/FOLDER/file2/"));
 
-        TestCase.assertTrue(prepareMock().images().size() == 1);
-        TestCase.assertTrue(prepareMock().pages().size() == 1);
+        TestCase.assertTrue(prepareMock().imagesLinks().size() == 1);
+        TestCase.assertTrue(prepareMock().pagesLinks().size() == 1);
     }
 
     private String lastSymbol(String str){
@@ -84,10 +84,10 @@ public class TestConvertedToURI {
         images.add (new Element("img").attr("src", "http://www.website.ru/folder/file1.jpg/"));
         pages.add (new Element("a").attr("href", "http://www.website.ru/folder/file2/"));
 
-        for ( URI uri : prepareMock().images() )
+        for ( URI uri : prepareMock().imagesLinks() )
             TestCase.assertFalse(lastSymbol(uri.toString()).equals("/") );
 
-        for ( URI uri : prepareMock().pages() )
+        for ( URI uri : prepareMock().pagesLinks() )
             TestCase.assertFalse(lastSymbol(uri.toString()).equals("/") );
     }
 

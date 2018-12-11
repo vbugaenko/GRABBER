@@ -2,7 +2,6 @@ package ru.grabber.parser;
 
 import junit.framework.TestCase;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
@@ -26,8 +25,8 @@ public class TestFiltered {
 
     public Filtered prepareMock(){
         ConvertedToURI uri = mock(ConvertedToURI.class);
-        when(uri.images()).thenReturn( images );
-        when(uri.pages() ).thenReturn( pages  );
+        when(uri.imagesLinks()).thenReturn( images );
+        when(uri.pagesLinks() ).thenReturn( pages  );
         return new Filtered( host, uri );
     }
 

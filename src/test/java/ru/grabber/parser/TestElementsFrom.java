@@ -21,7 +21,7 @@ public class TestElementsFrom {
     public void amountLinksFromRealResource_Test() throws IOException {
         ElementsFrom elmsFrm = new ElementsFrom("http://yandex.ru");
         ConvertedToURI uri = new ConvertedToURI(elmsFrm);
-        TestCase.assertTrue(uri.images().size() > 0);
-        TestCase.assertTrue(uri.pages().size() > 0);
+        TestCase.assertTrue(uri.imagesLinks().size() > 0);
+        TestCase.assertTrue(uri.pagesLinks().size() > 0);
     }
 }
