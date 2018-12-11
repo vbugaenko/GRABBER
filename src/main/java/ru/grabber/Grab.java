@@ -1,5 +1,8 @@
 package ru.grabber;
 
+import ru.grabber.holder.Holder;
+import ru.grabber.holder.LoadedLinksHolder;
+import ru.grabber.loader.Loader;
 import ru.grabber.parser.Parser;
 import ru.grabber.util.Util;
 
@@ -18,9 +21,17 @@ public class Grab {
 
     private static final String website="http://www.website.ru/";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
-        loadParsedSavedLinks();
+        long start = System.currentTimeMillis();
+
+        Holder holder = LoadedLinksHolder.getInstance();
+        holder.add(loadParsedSavedLinks());
+
+        Loader loader = new Loader(website);
+        while (loader.getThreadsCount().get()>0)
+            Thread.sleep(1000);
+        System.out.println("Loaded time: " + (System.currentTimeMillis()-start));
 
     }
 
@@ -34,7 +45,7 @@ public class Grab {
 
     private static Map<URI, Boolean> loadParsedSavedLinks(){
         Map<URI, Boolean> parsed = null;
-        try (FileInputStream fis = new FileInputStream(Util.getProjectName(website));
+        try (FileInputStream fis = new FileInputStream(Util.getProjectName(website)+".save");
              ObjectInputStream ois = new ObjectInputStream(fis)) {
 
             parsed = (Map<URI, Boolean>) ois.readObject();
