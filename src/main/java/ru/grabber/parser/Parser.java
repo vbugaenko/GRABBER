@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 import ru.grabber.holder.Holder;
 import ru.grabber.holder.LoadedLinksHolder;
 import ru.grabber.holder.ParsedLinksHolder;
+import ru.grabber.loader.Loader;
 
 import java.io.IOException;
 import java.net.URI;
@@ -30,9 +31,6 @@ public class Parser implements Runnable {
     }
 
     private Parser(String website, AtomicInteger threadsCount) {
-        if ((website==null)||(threadsCount==null))
-            throw new IllegalArgumentException();
-
         this.website = website.toLowerCase();
         this.threadsCount = threadsCount;
     }
@@ -70,10 +68,17 @@ public class Parser implements Runnable {
             startParsersThreads();
         }
         threadsCount.decrementAndGet();
+
+        if (threadsCount.get()==0) {
+            logger.info("Total parsed: " + parsed.amount() + " links");
+            loaded.save(website);
+            new Loader(website);
+        }
     }
 
     private void startParsersThreads() {
         for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors() ); i++)
             new Thread(new Parser(website, threadsCount)).start();
     }
+
 }
