@@ -6,8 +6,6 @@ import ru.grabber.holder.ParsedLinksHolder;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -21,7 +19,6 @@ public class Manager {
     private final Logger logger = Logger.getLogger(Manager.class);
     private final String website;
     private final int cores = Runtime.getRuntime().availableProcessors();
-    private final ExecutorService executor = Executors.newFixedThreadPool(cores);
     private final AtomicInteger threadsCount = new AtomicInteger(0);
     private final Holder holder = ParsedLinksHolder.getInstance();
 
@@ -34,8 +31,7 @@ public class Manager {
     private void parse(){
         try {
             long startTime = System.currentTimeMillis();
-
-            executor.execute(new Parser(website, threadsCount));
+            new Thread(new Parser(website, threadsCount)).start();
             Thread.sleep(3000);
 
             while (threadsCount.get() > 0) {
@@ -56,7 +52,7 @@ public class Manager {
 
     private void startParsersThreads() {
         for (int i = threadsCount.get(); i < (cores); i++)
-            executor.execute(new Parser(website, threadsCount));
+            new Thread(new Parser(website, threadsCount)).start();
     }
 
 
