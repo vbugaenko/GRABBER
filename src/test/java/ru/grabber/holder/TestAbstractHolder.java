@@ -8,6 +8,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TestAbstractHolder {
 
@@ -32,6 +34,15 @@ public class TestAbstractHolder {
             new URI("http://www.website.ru/file2")
         )
         ));
+        TestCase.assertTrue(holder.amount() == 2);
+    }
+
+    @Test
+    public void addMap_Test() throws URISyntaxException {
+        Map<URI, Boolean> links = new ConcurrentHashMap<>();
+        links.put(new URI("http://www.website.ru/file1"), false);
+        links.put(new URI("http://www.website.ru/file2"), false);
+        holder.add(links);
         TestCase.assertTrue(holder.amount() == 2);
     }
 
@@ -79,6 +90,5 @@ public class TestAbstractHolder {
 
         TestCase.assertTrue(count == 3);
     }
-
 
 }
