@@ -35,8 +35,7 @@ public class Grab {
 
     private static void load() throws InterruptedException {
         long start = System.currentTimeMillis();
-        new Load(WEBSITE).get();
-        Loader loader = new Loader(WEBSITE);
+        Loader loader = new Loader(WEBSITE, new Load(WEBSITE).get());
         while (loader.getThreadsCount().get()>0)
             Thread.sleep(1000);
         logger.info("Loaded time: " + (System.currentTimeMillis()-start));

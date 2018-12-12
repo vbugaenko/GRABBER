@@ -2,8 +2,7 @@ package ru.grabber.parser;
 
 import org.apache.log4j.Logger;
 import ru.grabber.holder.Holder;
-import ru.grabber.holder.LoadedLinksHolder;
-import ru.grabber.holder.ParsedLinksHolder;
+import ru.grabber.holder.LinksHolder;
 import ru.grabber.holder.Save;
 
 import java.io.IOException;
@@ -19,20 +18,22 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Parser implements Runnable {
     private final Logger logger = Logger.getLogger(Parser.class);
-    private final Holder loaded = LoadedLinksHolder.getInstance();
-    private final Holder parsed = ParsedLinksHolder.getInstance();
+    private final Holder loaded;
+    private final Holder parsed;
     private final String website;
     private final AtomicInteger threadsCount;
 
     public Parser(URI website){
-        this(website.toString(), new AtomicInteger(0));
+        this(website.toString(), new AtomicInteger(0), new LinksHolder(), new LinksHolder());
         this.parsed.add(website);
         run();
     }
 
-    private Parser(String website, AtomicInteger threadsCount) {
+    private Parser(String website, AtomicInteger threadsCount,  Holder loaded, Holder parsed) {
         this.website = website.toLowerCase();
         this.threadsCount = threadsCount;
+        this.loaded = loaded;
+        this.parsed = parsed;
     }
 
     private void parse(String webpage) {
@@ -76,7 +77,7 @@ public class Parser implements Runnable {
 
     private void startParsersThreads() {
         for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors() ); i++)
-            new Thread(new Parser(website, threadsCount)).start();
+            new Thread(new Parser(website, threadsCount, loaded, parsed)).start();
     }
 
     public AtomicInteger getThreadsCount() {

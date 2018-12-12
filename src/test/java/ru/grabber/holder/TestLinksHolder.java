@@ -11,13 +11,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TestAbstractHolder {
+public class TestLinksHolder {
 
     private Holder holder;
 
     @Before
     public void prepareData() throws URISyntaxException {
-        class TestHolder extends AbstractHolder{}
+        class TestHolder extends LinksHolder {}
         holder = new TestHolder();
     }
 

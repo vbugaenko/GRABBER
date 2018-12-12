@@ -2,7 +2,6 @@ package ru.grabber.loader;
 
 import org.apache.log4j.Logger;
 import ru.grabber.holder.Holder;
-import ru.grabber.holder.LoadedLinksHolder;
 import ru.grabber.util.Util;
 
 import java.io.FileOutputStream;
@@ -24,18 +23,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Loader implements Runnable {
     private final org.apache.log4j.Logger logger = Logger.getLogger(Loader.class);
-    private final Holder holder = LoadedLinksHolder.getInstance();
+    private final Holder holder;
     private final String folder;
     private final AtomicInteger threadsCount;
 
-    public Loader(String folder) {
-        this(Util.getProjectName(folder), new AtomicInteger(0));
+    public Loader(String folder, Holder holder) {
+        this(Util.getProjectName(folder), new AtomicInteger(0), holder);
         startLoadersThreads();
     }
 
-    private Loader(String folder, AtomicInteger threadsCount) {
+    private Loader(String folder, AtomicInteger threadsCount, Holder holder) {
         this.threadsCount = threadsCount;
         this.folder = folder;
+        this.holder =  holder;
     }
 
     public AtomicInteger getThreadsCount() {
@@ -62,7 +62,7 @@ public class Loader implements Runnable {
 
     private void startLoadersThreads() {
         for (int i = threadsCount.get(); i < ( Runtime.getRuntime().availableProcessors()); i++)
-            new Thread(new Loader(folder, threadsCount)).start();
+            new Thread(new Loader(folder, threadsCount, holder)).start();
     }
 
     private void make(String folders) {

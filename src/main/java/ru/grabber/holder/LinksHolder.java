@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @since 10.12.2018
  */
 
-public abstract class AbstractHolder implements Holder, Serializable {
+public class LinksHolder implements Holder, Serializable {
 
     private final Map<URI, Boolean> links = new ConcurrentHashMap<>();
     private final AtomicInteger count = new AtomicInteger(0);

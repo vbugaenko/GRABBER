@@ -11,14 +11,14 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class TestSaveResult {
+public class TestSave {
 
     @Before
     public void prepareData() throws URISyntaxException {
         Map<URI, Boolean> links = new ConcurrentHashMap<>();
         links.put( new URI("http://www.website.ru/file1"), false);
 
-        Holder holder = LoadedLinksHolder.getInstance();
+        Holder holder = new LinksHolder();
         holder.add(links);
         new Save("testFile", holder);
     }
