@@ -1,16 +1,13 @@
 package ru.grabber;
 
-import ru.grabber.holder.Holder;
-import ru.grabber.holder.LoadedLinksHolder;
+import org.apache.log4j.Logger;
+import ru.grabber.holder.Load;
 import ru.grabber.loader.Loader;
 import ru.grabber.parser.Parser;
-import ru.grabber.util.Util;
 
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
+
 
 /**
  * @author Victor Bugaenko
@@ -18,41 +15,31 @@ import java.util.Map;
  */
 
 public class Grab {
+    private static final Logger logger = Logger.getLogger(Grab.class);
+    private static final String WEBSITE="http://www.website.ru/";
 
-    private static final String website="http://www.website.ru/";
+    public static void main(String[] args) throws InterruptedException, URISyntaxException {
 
-    public static void main(String[] args) throws InterruptedException {
+    parse();
+    load();
 
+    }
+
+    private static void parse() throws InterruptedException, URISyntaxException {
         long start = System.currentTimeMillis();
+        Parser parser = new Parser(new URI(WEBSITE));
+        while (parser.getThreadsCount().get()>0)
+            Thread.sleep(1000);
+        logger.info("Parsed time: " + (System.currentTimeMillis()-start));
+    }
 
-        Holder holder = LoadedLinksHolder.getInstance();
-        holder.add(loadParsedSavedLinks());
-
-        Loader loader = new Loader(website);
+    private static void load() throws InterruptedException {
+        long start = System.currentTimeMillis();
+        new Load(WEBSITE).get();
+        Loader loader = new Loader(WEBSITE);
         while (loader.getThreadsCount().get()>0)
             Thread.sleep(1000);
-        System.out.println("Loaded time: " + (System.currentTimeMillis()-start));
-
-    }
-
-    private static void parse(){
-        try {
-            new Parser(new URI(website));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private static Map<URI, Boolean> loadParsedSavedLinks(){
-        Map<URI, Boolean> parsed = null;
-        try (FileInputStream fis = new FileInputStream(Util.getProjectName(website)+".save");
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-            parsed = (Map<URI, Boolean>) ois.readObject();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return parsed;
+        logger.info("Loaded time: " + (System.currentTimeMillis()-start));
     }
 
 }

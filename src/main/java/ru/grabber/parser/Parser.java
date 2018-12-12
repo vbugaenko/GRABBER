@@ -79,4 +79,7 @@ public class Parser implements Runnable {
             new Thread(new Parser(website, threadsCount)).start();
     }
 
+    public AtomicInteger getThreadsCount() {
+        return threadsCount;
+    }
 }
