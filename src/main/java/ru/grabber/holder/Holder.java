@@ -23,5 +23,4 @@ public interface Holder {
 
     int amount();
 
-    void save(String website);
 }
