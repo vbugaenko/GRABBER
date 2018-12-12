@@ -2,6 +2,7 @@ package ru.grabber.holder;
 
 import junit.framework.TestCase;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
@@ -12,19 +13,26 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class TestSaveResult {
 
+    @Before
+    public void prepareData() throws URISyntaxException {
+        Map<URI, Boolean> links = new ConcurrentHashMap<>();
+        links.put( new URI("http://www.website.ru/file1"), false);
+
+        Holder holder = LoadedLinksHolder.getInstance();
+        holder.add(links);
+        new Save("testFile", holder);
+    }
+
     @Test
     public void SaveResult_Test() throws URISyntaxException {
 
-        Map<URI, Boolean> links = new ConcurrentHashMap<>();
-        links.put( new URI("http://www.website.ru/file1"), false);
-        links.put( new URI("http://www.website.ru/file2"), false);
-        new SaveResult("testFile", links);
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("testFile.save"))) {
 
-        try (FileInputStream fis = new FileInputStream("testFile.save");
-            ObjectInputStream ois = new ObjectInputStream(fis)) {
+            Holder loaded = (Holder) ois.readObject();
 
-            Map<URI, Boolean> loaded = (Map<URI, Boolean>) ois.readObject();
-            TestCase.assertTrue(loaded.equals(links));
+            TestCase.assertTrue(loaded.amount()==1);
+            TestCase.assertTrue(loaded.chooseNext().toString().equals("http://www.website.ru/file1"));
+
         } catch (Exception e) {
             e.printStackTrace();
         }
