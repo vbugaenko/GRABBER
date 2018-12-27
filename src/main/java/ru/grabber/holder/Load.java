@@ -22,14 +22,13 @@ public class Load {
         this.file = Util.getProjectName(project)+".save";
     }
 
-    public Holder get() {
-        Holder holder = null;
+    public Object get() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
-            holder = (Holder) ois.readObject();
+            return ois.readObject();
         } catch (Exception e) {
             logger.error("Problem with loading ("+ file +")" + e.getMessage());
         }
-        return holder;
+        return null;
     }
 
 }
