@@ -91,4 +91,15 @@ public class TestLinksHolder {
         TestCase.assertTrue(count == 3);
     }
 
+    @Test
+    public void restore_Test() throws URISyntaxException {
+        Map<URI, Boolean> links = new ConcurrentHashMap<>();
+        links.put(new URI("http://www.website.ru/file1"), true);
+        holder.add(links);
+        TestCase.assertTrue(holder.amount() == 1);
+        TestCase.assertTrue(holder.chooseNext() == null);
+        holder.restore();
+        TestCase.assertTrue(holder.chooseNext() != null);
+    }
+
 }
