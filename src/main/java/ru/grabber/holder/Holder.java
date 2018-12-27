@@ -23,4 +23,6 @@ public interface Holder {
 
     int amount();
 
+    void restore();
+
 }

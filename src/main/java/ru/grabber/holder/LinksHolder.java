@@ -48,4 +48,9 @@ public class LinksHolder implements Holder, Serializable {
         return links.size() > count.get();
     }
 
+    public void restore(){
+        for (Map.Entry<URI, Boolean> entry : links.entrySet())
+            entry.setValue(false);
+    }
+
 }
