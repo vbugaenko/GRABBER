@@ -1,6 +1,7 @@
 package ru.grabber;
 
 import org.apache.log4j.Logger;
+import ru.grabber.holder.Holder;
 import ru.grabber.holder.Load;
 import ru.grabber.loader.Loader;
 import ru.grabber.parser.Parser;
@@ -35,7 +36,7 @@ public class Grab {
 
     private static void load() throws InterruptedException {
         long start = System.currentTimeMillis();
-        Loader loader = new Loader(WEBSITE, new Load(WEBSITE).get());
+        Loader loader = new Loader(WEBSITE, (Holder) new Load(WEBSITE).get());
         while (loader.getThreadsCount().get()>0)
             Thread.sleep(1000);
         logger.info("Loaded time: " + (System.currentTimeMillis()-start));
